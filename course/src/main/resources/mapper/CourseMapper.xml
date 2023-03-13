@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CourseMapper">
+    <select id="queryCourseList" resultType="com.example.entity.Course">
+        select * from course
+    </select>
+    <select id="SearchCourse" resultType="java.lang.String">
+        select * from course  where  courseName like #{courseName} or courseId = #{courseId};
+
+    </select>
+    <insert id ="InsertCourse" parameterType="com.example.entity.Course">
+        insert into course( courseName, courseId, introduction, textbook,tags,teacher)
+        values(#{courseName},#{courseId},#{introduction},#{textbook},#{tags},#{teacher})
+    </insert>
+    <update id="UpdateCourse" parameterType="com.example.entity.Course">
+        update course set  courseName = #{courseName} , introduction = #{introduction} , textbook = #{textbook},
+                           tags = #{tags},teacher=#{teacher}
+        where courseId = #{courseId}
+    </update>
+    <delete id="deleteCourse" parameterType="java.lang.String">
+        DELETE FROM course WHERE courseId = #{courseId};
+    </delete>
+</mapper>
