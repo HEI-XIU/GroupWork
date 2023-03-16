@@ -6,9 +6,8 @@
     <select id="queryCourseList" resultType="com.example.entity.Course">
         select * from course
     </select>
-    <select id="SearchCourse" resultType="java.lang.String">
+    <select id="SearchCourse" resultType="com.example.entity.Course">
         select * from course  where  courseName like #{courseName} or courseId = #{courseId};
-
     </select>
     <insert id ="InsertCourse" parameterType="com.example.entity.Course">
         insert into course( courseName, courseId, introduction, textbook,tags,teacher)
