@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50556
 File Encoding         : 65001
 
-Date: 2023-03-25 11:17:36
+Date: 2023-03-25 20:47:35
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -112,29 +112,84 @@ DROP TABLE IF EXISTS `tag`;
 CREATE TABLE `tag` (
   `tagid` int(11) NOT NULL AUTO_INCREMENT,
   `tagname` varchar(255) NOT NULL,
-  `taggroupname` varchar(128) DEFAULT NULL,
-  PRIMARY KEY (`tagid`),
-  KEY `key1` (`taggroupname`),
-  CONSTRAINT `tag_ibfk_1` FOREIGN KEY (`taggroupname`) REFERENCES `taggroup` (`gname`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+  PRIMARY KEY (`tagid`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of tag
 -- ----------------------------
-INSERT INTO `tag` VALUES ('1', '1', 'test');
+INSERT INTO `tag` VALUES ('1', '计算机');
+INSERT INTO `tag` VALUES ('2', '编程');
+INSERT INTO `tag` VALUES ('3', '前端');
+INSERT INTO `tag` VALUES ('5', '后端');
+INSERT INTO `tag` VALUES ('6', '技术');
+INSERT INTO `tag` VALUES ('7', '技术');
+INSERT INTO `tag` VALUES ('8', '技术');
 
 -- ----------------------------
--- Table structure for taggroup
+-- Table structure for tag_course
 -- ----------------------------
-DROP TABLE IF EXISTS `taggroup`;
-CREATE TABLE `taggroup` (
-  `gId` int(11) NOT NULL AUTO_INCREMENT,
-  `gname` varchar(128) NOT NULL,
-  PRIMARY KEY (`gId`,`gname`),
-  KEY `gname` (`gname`)
+DROP TABLE IF EXISTS `tag_course`;
+CREATE TABLE `tag_course` (
+  `tcid` int(127) NOT NULL AUTO_INCREMENT,
+  `tid` int(127) NOT NULL,
+  `cid` int(127) NOT NULL,
+  PRIMARY KEY (`tcid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
--- Records of taggroup
+-- Records of tag_course
 -- ----------------------------
-INSERT INTO `taggroup` VALUES ('1', 'test');
+INSERT INTO `tag_course` VALUES ('1', '1', '1');
+
+-- ----------------------------
+-- Table structure for tag_group
+-- ----------------------------
+DROP TABLE IF EXISTS `tag_group`;
+CREATE TABLE `tag_group` (
+  `tgid` int(127) NOT NULL AUTO_INCREMENT,
+  `tid` int(127) NOT NULL,
+  `gid` int(127) NOT NULL,
+  PRIMARY KEY (`tgid`,`tid`,`gid`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of tag_group
+-- ----------------------------
+INSERT INTO `tag_group` VALUES ('9', '2', '1');
+INSERT INTO `tag_group` VALUES ('10', '5', '2');
+
+-- ----------------------------
+-- Table structure for tag_konwledge
+-- ----------------------------
+DROP TABLE IF EXISTS `tag_konwledge`;
+CREATE TABLE `tag_konwledge` (
+  `tkid` int(127) NOT NULL AUTO_INCREMENT,
+  `tid` int(127) NOT NULL,
+  `kid` int(127) NOT NULL,
+  PRIMARY KEY (`tkid`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of tag_konwledge
+-- ----------------------------
+INSERT INTO `tag_konwledge` VALUES ('1', '1', '1');
+INSERT INTO `tag_konwledge` VALUES ('2', '1', '2');
+INSERT INTO `tag_konwledge` VALUES ('3', '1', '3');
+
+-- ----------------------------
+-- Table structure for tgroup
+-- ----------------------------
+DROP TABLE IF EXISTS `tgroup`;
+CREATE TABLE `tgroup` (
+  `gid` int(11) NOT NULL AUTO_INCREMENT,
+  `gname` varchar(128) NOT NULL,
+  PRIMARY KEY (`gid`),
+  KEY `gname` (`gname`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of tgroup
+-- ----------------------------
+INSERT INTO `tgroup` VALUES ('2', '前端');
+INSERT INTO `tgroup` VALUES ('1', '教学');
