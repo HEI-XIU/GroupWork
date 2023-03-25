@@ -21,4 +21,7 @@ public interface TagRepository extends JpaRepository<TagEntity,Integer>{
     @Query(value = "select DISTINCT * from tag t ,tag_group tg WHERE t.tagid = tg.tid and tg.gid = ?1 ", nativeQuery = true)
     List<TagEntity> getByGid(Integer id);
 
+    @Query(value = "select DISTINCT * from tag t ,tag_knowlege tk WHERE t.tagid = tk.tid and tk.kid = ?1 ", nativeQuery = true)
+    List<TagEntity> getByKid(Integer id);
+
 }

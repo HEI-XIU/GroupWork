@@ -8,10 +8,7 @@ import com.example.zuccknowledge.repository.GroupRepository;
 import com.example.zuccknowledge.repository.TagAndGroupRepository;
 import com.example.zuccknowledge.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,7 +24,11 @@ public class TagAndGroupController {
     @GetMapping("/rbtag")//relationship between tag and group
     List<TagGroupEntity> getAll(){return tagAndGroupRepository.findAll();}
     //组删除标签
-    //标签删除组
+    @PostMapping("/deleteTag/{tid}")
+    void deleteTag(@PathVariable int tid){ tagAndGroupRepository.deleteByTid(tid);}
+//    标签删除组
+    @PostMapping("/deleteGroup/{id}")
+    int deleteGroup(@PathVariable int id){return tagAndGroupRepository.deleteByGid(id);}
 
     //根据标签组的id查所包含的标签
     @GetMapping("/byTid/{id}")
@@ -40,7 +41,5 @@ public class TagAndGroupController {
     List<TgroupEntity> getByTid(@PathVariable Integer id) {
         return groupRepository.getByTid(id);
     }
-
-
 
 }

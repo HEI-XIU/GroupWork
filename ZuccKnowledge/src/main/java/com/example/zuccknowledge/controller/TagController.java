@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/tag")
 public class TagController {
@@ -30,11 +32,12 @@ public class TagController {
         return convert(tagRepository.findAll());
     }
     @GetMapping("/byId/{id}")
-    Tag getById(@PathVariable Integer id){
-        TagEntity tagEntity = tagRepository.getOne(id);
-        Tag tag = new Tag();
-        BeanUtils.copyProperties(tagEntity,tag);
-        return tag;
+    Optional<TagEntity> getById(@PathVariable Integer id){
+        Optional<TagEntity> tagEntity = tagRepository.findById(id);
+        System.out.println(tagEntity.toString());
+//        Tag tag = new Tag();
+//        BeanUtils.copyProperties(tagEntity,tag);
+        return tagEntity;
     }
     @GetMapping("/byName/{nameLike}")
     List<Tag> getByName(@PathVariable String nameLike){
