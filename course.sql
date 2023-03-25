@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : booklib
+Source Server         : localhost_3306
 Source Server Version : 50556
 Source Host           : localhost:3306
 Source Database       : course
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50556
 File Encoding         : 65001
 
-Date: 2023-03-16 14:06:18
+Date: 2023-03-24 18:11:44
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -21,92 +21,102 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `cases`;
 CREATE TABLE `cases` (
   `caseId` int(11) NOT NULL AUTO_INCREMENT,
-  `knowledgeId` int(11) DEFAULT NULL,
-  `caseInfo` longtext NOT NULL,
+  `caseName` varchar(255) NOT NULL,
+  `knowledgeId` int(11) NOT NULL,
+  `caseContent` longtext NOT NULL,
   `isCode` tinyint(1) NOT NULL,
   `type` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`caseId`),
-  KEY `FK_knowledgeId` (`knowledgeId`),
-  CONSTRAINT `FK_knowledgeId` FOREIGN KEY (`knowledgeId`) REFERENCES `knowledge` (`knowledgeId`)
+  KEY `FK_knowledgeId` (`knowledgeId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of cases
 -- ----------------------------
-INSERT INTO `cases` VALUES ('1', '1', '(function () {\r\n  var msg = \"hello\";\r\n  print(msg);\r\n})();', '1', 'JS');
-INSERT INTO `cases` VALUES ('2', '1', 'function myFunction(p1, p2) {\r\n    return p1 * p2;              // 该函数返回 p1 和 p2 的乘积\r\n}', '1', 'JS');
-INSERT INTO `cases` VALUES ('4', '2', 'var txt = \"\";\r\nvar numbers = [45, 4, 9, 16, 25];\r\nnumbers.forEach(myFunction);\r\n\r\nfunction myFunction(value, index, array) {\r\n  txt = txt + value + \"<br>\"; \r\nvar txt = \"\";\r\nvar numbers = [45, 4, 9, 16, 25];\r\nnumbers.forEach(myFunction);\r\n\r\nfunction myFunction(value, index, array) {\r\n  txt = txt + value + \"<br>\"; \r\n}', '1', 'JS');
+INSERT INTO `cases` VALUES ('1', 'js1', '1', '(function () {\r\n  var msg = \"hello\";\r\n  print(msg);\r\n})();', '1', 'JS');
+INSERT INTO `cases` VALUES ('2', 'js2', '1', 'function myFunction(p1, p2) {\r\n    return p1 * p2;              // 该函数返回 p1 和 p2 的乘积\r\n}', '1', 'JS');
+INSERT INTO `cases` VALUES ('4', 'js3', '2', 'var txt = \"\";\r\nvar numbers = [45, 4, 9, 16, 25];\r\nnumbers.forEach(myFunction);\r\n\r\nfunction myFunction(value, index, array) {\r\n  txt = txt + value + \"<br>\"; \r\nvar txt = \"\";\r\nvar numbers = [45, 4, 9, 16, 25];\r\nnumbers.forEach(myFunction);\r\n\r\nfunction myFunction(value, index, array) {\r\n  txt = txt + value + \"<br>\"; \r\n}', '1', 'JS');
 
 -- ----------------------------
--- Table structure for course
+-- Table structure for courses
 -- ----------------------------
-DROP TABLE IF EXISTS `course`;
-CREATE TABLE `course` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `courseName` varchar(255) DEFAULT NULL,
-  `courseId` varchar(11) DEFAULT NULL,
+DROP TABLE IF EXISTS `courses`;
+CREATE TABLE `courses` (
+  `courseId` int(11) NOT NULL,
+  `courseName` varchar(255) NOT NULL,
   `introduction` varchar(255) DEFAULT NULL,
   `textbook` varchar(255) DEFAULT NULL,
   `tags` varchar(255) DEFAULT NULL,
   `teacher` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+  PRIMARY KEY (`courseId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
--- Records of course
+-- Records of courses
 -- ----------------------------
-INSERT INTO `course` VALUES ('6', 'zk', '1', null, null, null, null);
-INSERT INTO `course` VALUES ('9', '软件架构', '3', '一门好课', 'SpringBoot', null, '彭彬');
+INSERT INTO `courses` VALUES ('1', 'zk', null, null, null, null);
 
 -- ----------------------------
 -- Table structure for knowledge
 -- ----------------------------
 DROP TABLE IF EXISTS `knowledge`;
 CREATE TABLE `knowledge` (
-  `knowledgeId` int(11) NOT NULL AUTO_INCREMENT,
-  `knowledgeName` varchar(255) NOT NULL,
+  `kid` int(11) NOT NULL AUTO_INCREMENT,
+  `kname` varchar(255) NOT NULL,
+  `courseid` int(11) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   `emphasis` varchar(255) DEFAULT NULL,
-  `preKnowledges` longtext,
-  `labels` longtext,
-  PRIMARY KEY (`knowledgeId`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+  PRIMARY KEY (`kid`),
+  KEY `FK_courseId342525` (`courseid`),
+  CONSTRAINT `FK_courseId342525` FOREIGN KEY (`courseId`) REFERENCES `courses` (`courseId`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of knowledge
 -- ----------------------------
-INSERT INTO `knowledge` VALUES ('1', 'test', 'test', 'test', '{}', '{0: \'MySql\', 1: \'计算机\'}');
-INSERT INTO `knowledge` VALUES ('2', 'test', 'test', 'test', '{0: 1}', '{0: \'MySql\', 1: \'计算机\'}');
-INSERT INTO `knowledge` VALUES ('3', 't', 't', 't', '{}', '{}');
+INSERT INTO `knowledge` VALUES ('1', '计算机', '1', '计算机（computer）俗称电脑，是现代一种用于高速计算的电子计算机器，可以进行数值计算，又可以进行逻辑计算，还具有存储记忆功能。', 'C语言');
+INSERT INTO `knowledge` VALUES ('2', '高等数学', '1', '高等数学是指相对于初等数学和中等数学而言，数学的对象及方法较为繁杂的一部分，中学的代数、几何以及简单的集合论初步、逻辑初步称为中等数学，将其作为中小学阶段的初等数学与大学阶段的高等数学的过渡。', '微积分');
+INSERT INTO `knowledge` VALUES ('3', 'springboot', '1', 'Spring Boot是由Pivotal团队提供的全新框架，其设计目的是用来简化新Spring应用的初始搭建以及开发过程。', 'spring');
+INSERT INTO `knowledge` VALUES ('4', '前端', '1', '前端即网站前台部分，运行在PC端，移动端等浏览器上展现给用户浏览的网页。随着互联网技术的发展，HTML5，CSS3，前端框架的应用，跨平台响应式网页设计能够适应各种屏幕分辨率，合适的动效设计，给用户带来极高的用户体验。', 'html+css+javascript');
+INSERT INTO `knowledge` VALUES ('5', '后端', '1', '后端的工作职责是负责后台端程序的相关开关，主要是涉及到了服务器以及数据库还有相关语言代码的编写工作。', 'java');
+INSERT INTO `knowledge` VALUES ('6', 'C语言', '1', 'C语言是一门面向过程的、抽象化的通用程序设计语言，广泛应用于底层开发。C语言能以简易的方式编译、处理低级存储器。C语言是仅产生少量的机器语言以及不需要任何运行环境支持便能运行的高效率程序设计语言。尽管C语言提供了许多低级处理的功能，但仍然保持着跨平台的特性，以一个标准规格写出的C语言程序可在包括类似嵌入式处理器以及超级计算机等作业平台的许多计算机平台上进行编译。', '面向过程');
+INSERT INTO `knowledge` VALUES ('8', 'test1', '1', 'test1', 'test1');
+INSERT INTO `knowledge` VALUES ('9', 'test2', '1', 'test2', 'test2');
 
 -- ----------------------------
--- Table structure for tag
+-- Table structure for labels
 -- ----------------------------
-DROP TABLE IF EXISTS `tag`;
-CREATE TABLE `tag` (
-  `tagId` int(11) NOT NULL AUTO_INCREMENT,
-  `tagName` varchar(255) NOT NULL,
-  `tagGroupName` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`tagId`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+DROP TABLE IF EXISTS `labels`;
+CREATE TABLE `labels` (
+  `labelId` int(11) NOT NULL AUTO_INCREMENT,
+  `labelName` varchar(255) DEFAULT NULL,
+  `knowledgeId` int(11) NOT NULL,
+  PRIMARY KEY (`labelId`),
+  KEY `FK_knowledgeId` (`knowledgeId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
--- Records of tag
+-- Records of labels
 -- ----------------------------
-INSERT INTO `tag` VALUES ('1', '计算机', '课程');
-INSERT INTO `tag` VALUES ('2', '软件架构', null);
 
 -- ----------------------------
--- Table structure for taggroup
+-- Table structure for prerelation
 -- ----------------------------
-DROP TABLE IF EXISTS `taggroup`;
-CREATE TABLE `taggroup` (
-  `tagGroupId` int(11) NOT NULL AUTO_INCREMENT,
-  `tagGroupName` varchar(255) NOT NULL,
-  PRIMARY KEY (`tagGroupId`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+DROP TABLE IF EXISTS `prerelation`;
+CREATE TABLE `prerelation` (
+  `preid` int(11) NOT NULL AUTO_INCREMENT,
+  `kid` int(11) NOT NULL,
+  `prekid` int(11) NOT NULL,
+  PRIMARY KEY (`preid`),
+  KEY `FK_kid1` (`kid`),
+  KEY `FK_kid2` (`prekid`),
+  CONSTRAINT `FK_kid1` FOREIGN KEY (`kid`) REFERENCES `knowledge` (`kid`),
+  CONSTRAINT `FK_kid2` FOREIGN KEY (`prekid`) REFERENCES `knowledge` (`kid`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
--- Records of taggroup
+-- Records of prerelation
 -- ----------------------------
-INSERT INTO `taggroup` VALUES ('1', '课程');
+INSERT INTO `prerelation` VALUES ('1', '6', '1');
+INSERT INTO `prerelation` VALUES ('2', '5', '3');
+INSERT INTO `prerelation` VALUES ('3', '5', '1');

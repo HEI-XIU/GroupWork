@@ -1,10 +1,10 @@
-package com.example;
+package com.example.zuccknowledge;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CourseApplicationTests {
+class ZuccKnowledgeApplicationTests {
 
     @Test
     void contextLoads() {
