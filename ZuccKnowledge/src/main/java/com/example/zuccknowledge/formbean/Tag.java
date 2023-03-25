@@ -4,5 +4,4 @@ import lombok.Data;
 public class Tag {
     private int tagid;
     private String tagname;
-    private String taggroupname;
 }
