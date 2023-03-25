@@ -5,9 +5,15 @@ spring:
     password: 123
     driver-class-name: com.mysql.cj.jdbc.Driver
     initialization-mode: always
+    jackson:
+      serialization:
+        FAIL_ON_EMPTY_BEANS: false
 server:
   port: 8081
-#Mybatis
-mybatis:
-  type-aliases-package: com.example.entity
-  mapper-locations: classpath:mapper/*.xml
+
+
+
+##Mybatis
+#mybatis:
+#  type-aliases-package: com.example.entity
+#  mapper-locations: classpath:mapper/*.xml

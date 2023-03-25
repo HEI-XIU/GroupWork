@@ -1,60 +1,66 @@
 package com.example.controller;
 
-import com.example.entity.Tag;
-import com.example.mapper.TagMapper;
+import com.example.entity.TagEntity;
+import com.example.frombean.Tag;
+import com.example.repository.TagRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Tag")
+@RequestMapping("/tag")
 public class TagController {
     @Autowired
-    TagMapper tagMapper;
+    private TagRepository tagRepository;
 
-    @GetMapping("/queryTagList")
-    public List<Tag> queryTagList() {
-        List<Tag> tagList = tagMapper.queryTagList();
-        if (tagList == null) {
-            return null;
-        }
-        return tagList;
+
+    @GetMapping("/all")
+    List<Tag> getAll() {
+        return convert(tagRepository.findAll());
     }
-    @GetMapping("/searchTag")
-    public Tag SearchTag(@RequestBody String str) {
-        Tag tag = tagMapper.SearchTag(str);
-        System.out.println(str);
-        System.out.println(tag);
+    @GetMapping("/byId/{id}")
+    Tag getById(@PathVariable Integer id){
+        TagEntity tagEntity = tagRepository.getOne(id);
+        Tag tag = new Tag();
+        BeanUtils.copyProperties(tagEntity,tag);
         return tag;
     }
+    @GetMapping("/byName/{nameLike}")
+    List<Tag> getByName(@PathVariable String nameLike){
+        return convert(tagRepository.getNameLike("%"+nameLike+"%"));
+    }
+    //修改以及存储
+    @PostMapping("/save")
+    public int saveTag(@RequestBody Tag tag){
+        TagEntity tagEntity = new TagEntity();
+        BeanUtils.copyProperties(tag,tagEntity);
+        tagRepository.save(tagEntity);
+        return 1;
+    }
+    @PostMapping("/link")
+    public int linkTagGroup(@RequestBody Tag tag){
+        TagEntity tagEntity = new TagEntity();
+        BeanUtils.copyProperties(tag,tagEntity);
+        tagRepository.save(tagEntity);
+        return 1;
+    }
+    @PostMapping("/delete/{id}")
+    public int deleteTag(@PathVariable int id){
+        tagRepository.deleteById(id);
+        return 1;
+    }
+    private List<Tag> convert(List<TagEntity> entityList) {
+        List<Tag> TagList = new ArrayList<>();
+        entityList.stream().forEach(item -> {
+            Tag tag = new Tag();
+            BeanUtils.copyProperties(item, tag);
+            TagList.add(tag);
+        });
 
-    //增
-    @PostMapping("/insertTag")
-    public int InsertTag(@RequestBody Tag tag) {
-//        System.out.println(tag);
-        return tagMapper.InsertTag(tag);
+        return TagList;
     }
-    //postman中只能使用json格式传输，否则会报错
 
-    //    改
-    @PostMapping("/updateTag")
-    public int updateTag(@RequestBody Tag tag) {
-//        tag.setUpdateTime(new Date());
-//        System.out.println(tag);
-        return tagMapper.UpdateTag(tag);
-    }
-    @PostMapping("/linkTagGroup")
-    public int linkTagGroup(@RequestBody Tag tag) {
-//        tag.setUpdateTime(new Date());
-//        System.out.println(tag);
-        return tagMapper.LinkTagGroup(tag);
-    }
-    //    删
-    @PostMapping("/deleteTag")
-    public int deleteTag(@RequestBody String str) {
-//        tag.setUpdateTime(new Date());
-        System.out.println(str);
-        return tagMapper.deleteTag(str);
-    }
 }
