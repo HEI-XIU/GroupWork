@@ -3,7 +3,8 @@ package com.example.zuccknowledge.controller;
 
 import com.example.zuccknowledge.entity.TgroupEntity;
 import com.example.zuccknowledge.formbean.TagGroup;
-import com.example.zuccknowledge.repository.TagGroupRepository;
+import com.example.zuccknowledge.repository.GroupRepository;
+//import com.example.zuccknowledge.repository.TagGroupRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ import java.util.Optional;
 @RequestMapping("/tagGroup")
 public class TagGroupController {
     @Autowired
-    private TagGroupRepository tgRepository;
+    private GroupRepository tgRepository;
 
 
     @GetMapping("/all")
