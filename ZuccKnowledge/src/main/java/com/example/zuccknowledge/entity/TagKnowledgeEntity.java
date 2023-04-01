@@ -3,8 +3,8 @@ package com.example.zuccknowledge.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "tag_konwledge", schema = "test", catalog = "")
-public class TagKonwledgeEntity {
+@Table(name = "tag_knowledge", schema = "test", catalog = "")
+public class TagKnowledgeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "tkid")
@@ -45,7 +45,7 @@ public class TagKonwledgeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TagKonwledgeEntity that = (TagKonwledgeEntity) o;
+        TagKnowledgeEntity that = (TagKnowledgeEntity) o;
 
         if (tkid != that.tkid) return false;
         if (tid != that.tid) return false;
