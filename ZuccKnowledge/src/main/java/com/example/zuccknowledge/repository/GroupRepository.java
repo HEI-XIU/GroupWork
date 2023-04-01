@@ -12,4 +12,6 @@ public interface GroupRepository extends JpaRepository<TgroupEntity, Integer> {
 
     @Query(value = "select DISTINCT * from tgroup g ,tag_group tg WHERE g.gid = tg.gid and tg.tid = ?1 ", nativeQuery = true)
     List<TgroupEntity> getByTid(Integer id);
+    @Query(value="select * from tgroup where gname like ?",nativeQuery = true)
+    List<TgroupEntity> getNameLike(String s);
 }
