@@ -1,7 +1,6 @@
 package com.example.zuccknowledge.controller;
 
 
-import com.example.zuccknowledge.entity.TagGroupEntity;
 import com.example.zuccknowledge.entity.TgroupEntity;
 import com.example.zuccknowledge.formbean.TagGroup;
 import com.example.zuccknowledge.repository.TagGroupRepository;
@@ -24,25 +23,29 @@ public class TagGroupController {
     List<TagGroup> getAll() {
         return convert(tgRepository.findAll());
     }
+
     @GetMapping("/byId/{id}")
-    Optional<TgroupEntity> getById(@PathVariable Integer id){
+    Optional<TgroupEntity> getById(@PathVariable Integer id) {
         Optional<TgroupEntity> tgEntity = tgRepository.findById(id);
         return tgEntity;
     }
+
     @GetMapping("/byName/{nameLike}")
-    List<TagGroup> getByName(@PathVariable String nameLike){
-        return convert(tgRepository.getNameLike("%"+nameLike+"%"));
+    List<TagGroup> getByName(@PathVariable String nameLike) {
+        return convert(tgRepository.getNameLike("%" + nameLike + "%"));
     }
+
     //新增和修改
     @PostMapping("/save")
-    public int saveTagGroup(@RequestBody TagGroup tg){
+    public int saveTagGroup(@RequestBody TagGroup tg) {
         TgroupEntity tgEntity = new TgroupEntity();
-        BeanUtils.copyProperties(tg,tgEntity);
+        BeanUtils.copyProperties(tg, tgEntity);
         tgRepository.save(tgEntity);
         return 1;
     }
+
     @PostMapping("/delete/{id}")
-    public int deleteTagGroup(@PathVariable int id){
+    public int deleteTagGroup(@PathVariable int id) {
         tgRepository.deleteById(id);
         return 1;
     }

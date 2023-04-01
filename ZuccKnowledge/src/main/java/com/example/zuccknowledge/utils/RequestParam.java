@@ -1,6 +1,7 @@
 package com.example.zuccknowledge.utils;
 
 import lombok.Data;
+
 @Data
 
 public class RequestParam {

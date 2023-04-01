@@ -3,7 +3,6 @@ package com.example.zuccknowledge.controller;
 import com.example.zuccknowledge.entity.TagEntity;
 import com.example.zuccknowledge.entity.TagGroupEntity;
 import com.example.zuccknowledge.entity.TgroupEntity;
-import com.example.zuccknowledge.formbean.PrerelationView;
 import com.example.zuccknowledge.repository.GroupRepository;
 import com.example.zuccknowledge.repository.TagAndGroupRepository;
 import com.example.zuccknowledge.repository.TagRepository;
@@ -21,14 +20,24 @@ public class TagAndGroupController {
     private TagRepository tagRepository;
     @Autowired
     private GroupRepository groupRepository;
-    @GetMapping("/rbtag")//relationship between tag and group
-    List<TagGroupEntity> getAll(){return tagAndGroupRepository.findAll();}
+
+    @GetMapping("/rbtag")
+//relationship between tag and group
+    List<TagGroupEntity> getAll() {
+        return tagAndGroupRepository.findAll();
+    }
+
     //组删除标签
     @PostMapping("/deleteTag/{tid}")
-    void deleteTag(@PathVariable int tid){ tagAndGroupRepository.deleteByTid(tid);}
-//    标签删除组
+    void deleteTag(@PathVariable int tid) {
+        tagAndGroupRepository.deleteByTid(tid);
+    }
+
+    //标签删除组
     @PostMapping("/deleteGroup/{id}")
-    int deleteGroup(@PathVariable int id){return tagAndGroupRepository.deleteByGid(id);}
+    int deleteGroup(@PathVariable int id) {
+        return tagAndGroupRepository.deleteByGid(id);
+    }
 
     //根据标签组的id查所包含的标签
     @GetMapping("/byTid/{id}")
