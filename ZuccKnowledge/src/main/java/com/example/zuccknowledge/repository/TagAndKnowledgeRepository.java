@@ -17,4 +17,9 @@ public interface TagAndKnowledgeRepository extends JpaRepository<TagKonwledgeEnt
     @Modifying
     @Transactional
     int deleteByKid(int id);
+
+    @Query(value = "select count(*) from tag_konwlege where kid =?1 and tid =?2",nativeQuery = true)
+    int countByKidAndTid(int kid,int tid);
+    @Query(value = "select count(*) from tag_konwlege where tkid =?1 ",nativeQuery = true)
+    int countByTkid(int tkid);
 }
