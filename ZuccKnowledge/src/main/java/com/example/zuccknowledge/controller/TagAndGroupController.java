@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tagc")//tag and group controller
+@RequestMapping("/api/tagc")//tag and group controller
 public class TagAndGroupController {
     @Autowired
     private TagAndGroupRepository tagAndGroupRepository;

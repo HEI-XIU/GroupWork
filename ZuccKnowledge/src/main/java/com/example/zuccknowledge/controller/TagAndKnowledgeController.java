@@ -1,7 +1,6 @@
 package com.example.zuccknowledge.controller;
 
 import com.example.zuccknowledge.entity.*;
-import com.example.zuccknowledge.formbean.TagAndGroup;
 import com.example.zuccknowledge.formbean.TagAndKnowledge;
 import com.example.zuccknowledge.repository.KnowledgeRepository;
 import com.example.zuccknowledge.repository.TagAndKnowledgeRepository;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @RestController
-@RequestMapping("/takc") //tag and knowledge controller
+@RequestMapping("/api/takc") //tag and knowledge controller
 public class TagAndKnowledgeController {
     @Autowired
     private TagAndKnowledgeRepository tagAndKnowledgeRepository;
@@ -26,7 +25,7 @@ public class TagAndKnowledgeController {
      * @return
      */
     @GetMapping("/rbtag")//relationship between tag and group
-    List<TagKonwledgeEntity> getAll(){return tagAndKnowledgeRepository.findAll();}
+    List<TagKnowledgeEntity> getAll(){return tagAndKnowledgeRepository.findAll();}
 
     /**
      * 知识点操作
@@ -45,10 +44,10 @@ public class TagAndKnowledgeController {
      */
     @PostMapping("/knowledgAddTag")
     int knowledgAddTag(@RequestBody TagAndKnowledge tagAndKnowledge){
-        TagKonwledgeEntity tagKonwledgeEntity = new TagKonwledgeEntity();
+        TagKnowledgeEntity tagKnowledgeEntity = new TagKnowledgeEntity();
         if(tagAndKnowledgeRepository.countByKidAndTid(tagAndKnowledge.getKid(),tagAndKnowledge.getTid())==0){
-            BeanUtils.copyProperties(tagAndKnowledge,tagKonwledgeEntity);
-            tagAndKnowledgeRepository.save(tagKonwledgeEntity);
+            BeanUtils.copyProperties(tagAndKnowledge, tagKnowledgeEntity);
+            tagAndKnowledgeRepository.save(tagKnowledgeEntity);
         }
         return 1;
     }
@@ -61,10 +60,10 @@ public class TagAndKnowledgeController {
      */
     @PostMapping("/knowledgUpdateTag")
     int knowledgUpdateTag(@RequestBody TagAndKnowledge tagAndKnowledge){
-        TagKonwledgeEntity tagKonwledgeEntity = new TagKonwledgeEntity();
+        TagKnowledgeEntity tagKnowledgeEntity = new TagKnowledgeEntity();
         if(tagAndKnowledgeRepository.countByTkid(tagAndKnowledge.getTkid())!=0){
-            BeanUtils.copyProperties(tagAndKnowledge,tagKonwledgeEntity);
-            tagAndKnowledgeRepository.save(tagKonwledgeEntity);
+            BeanUtils.copyProperties(tagAndKnowledge, tagKnowledgeEntity);
+            tagAndKnowledgeRepository.save(tagKnowledgeEntity);
         }
         return 1;
     }
