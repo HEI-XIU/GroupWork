@@ -3,8 +3,8 @@ package com.example.zuccknowledge.formbean;
 import lombok.Data;
 
 @Data
-public class TagAndGroup {
-    private  int tgid;
+public class TagAndCourses {
+    private int tcid;
     private int tid;
-    private  int gid;
+    private int cid;
 }

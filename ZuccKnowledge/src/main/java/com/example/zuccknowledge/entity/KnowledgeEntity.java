@@ -1,13 +1,10 @@
 package com.example.zuccknowledge.entity;
 
-import org.hibernate.annotations.Proxy;
-
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Proxy(lazy = false)
-@Table(name = "knowledge", schema = "course", catalog = "")
+@Table(name = "knowledge", schema = "courses", catalog = "")
 public class KnowledgeEntity {
     private int kid;
     private String kname;

@@ -42,17 +42,6 @@ public class KnowledgeController {
     }
 
     /**
-     * 根据courseid检索所有知识点
-     *
-     * @param CId
-     * @return
-     */
-    @GetMapping("/byCId/{CId}")
-    List<Knowledge> getByCId(@PathVariable Integer CId) {
-        return convert(knowledgeRepository.findByCourseid(CId));
-    }
-
-    /**
      * 根据名称关键词模糊查询知识点
      *
      * @param nameLike

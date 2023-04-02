@@ -18,24 +18,19 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/tag")
+@RequestMapping("/tag")
 public class TagController {
     @Autowired
     private TagRepository tagRepository;
-    /**
-     * 获得所有标签（仅做测试使用）
-     * @return
-     */
+    @Autowired
+    private TagAndGroupRepository tagAndGroupRepository;
+    @Autowired
+    private GroupRepository groupRepository;
+
     @GetMapping("/all")
     List<Tag> getAll() {
         return convert(tagRepository.findAll());
     }
-
-    /**
-     * 根据标签id进行检索标签
-     * @param id
-     * @return
-     */
     @GetMapping("/byId/{id}")
     Optional<TagEntity> getById(@PathVariable Integer id){
         Optional<TagEntity> tagEntity = tagRepository.findById(id);
@@ -44,22 +39,11 @@ public class TagController {
 //        BeanUtils.copyProperties(tagEntity,tag);
         return tagEntity;
     }
-
-    /**
-     * 根据标签名字进行模糊查询标签
-     * @param nameLike
-     * @return
-     */
     @GetMapping("/byName/{nameLike}")
     List<Tag> getByName(@PathVariable String nameLike){
         return convert(tagRepository.getNameLike("%"+nameLike+"%"));
     }
-
-    /**
-     * 对tag进行修改以及存储
-     * @param tag
-     * @return
-     */
+    //修改以及存储
     @PostMapping("/save")
     public int saveTag(@RequestBody Tag tag){
         TagEntity tagEntity = new TagEntity();
@@ -67,23 +51,35 @@ public class TagController {
         tagRepository.save(tagEntity);
         return 1;
     }
-
-    /**
-     * 根据标签id进行删除tag
-     * @param id
-     * @return
-     */
     @PostMapping("/delete/{id}")
     public int deleteTag(@PathVariable int id){
         tagRepository.deleteById(id);
         return 1;
     }
-
-    /**
-     *
-     * @param entityList
-     * @return
-     */
+    @PostMapping("/linkById")
+    public int linkTagGroupById(@RequestBody TagAndGroup tagAndGroup){
+        TagGroupEntity tagGroupEntity =new TagGroupEntity();
+//        System.out.println(tagAndGroupRepository.findByTidAndGid(tagAndGroup.getTid(),tagAndGroup.getGid()));
+        System.out.println(tagAndGroup.getTid()+" "+tagAndGroup.getGid());
+        if(tagAndGroupRepository.countByTidAndGid(tagAndGroup.getTid(),tagAndGroup.getGid())==0){
+            BeanUtils.copyProperties(tagAndGroup,tagGroupEntity);
+            tagAndGroupRepository.save(tagGroupEntity);
+        }
+        return 1;
+    }
+    @PostMapping("/linkByName")
+    public int linkTagGroupByName( @RequestBody RequestParam requestParam){
+        TagGroupEntity tagGroupEntity = new TagGroupEntity();
+        int tid = tagRepository.findByTagname(requestParam.getTname().toString());
+        int gid = groupRepository.findByGname(requestParam.getGname().toString());
+        tagGroupEntity.setTid(tid);
+        tagGroupEntity.setGid(gid);
+        System.out.println(tagGroupEntity.getTid());
+        if(tagAndGroupRepository.countByTidAndGid(tagGroupEntity.getTid(),tagGroupEntity.getGid())==0){
+            tagAndGroupRepository.save(tagGroupEntity);
+        }
+        return 1;
+    }
     private List<Tag> convert(List<TagEntity> entityList) {
         List<Tag> TagList = new ArrayList<>();
         entityList.stream().forEach(item -> {

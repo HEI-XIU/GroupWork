@@ -14,6 +14,6 @@ public interface PreRelationRepository extends JpaRepository<PrerelationEntity, 
 
     @Query(value = "SELECT preid, p.kid, prekid, kname preKName, courseid preCId, description preDes, emphasis preEmphasis\n" +
             "FROM prerelation p LEFT JOIN knowledge k ON (p.prekid = k.kid)" +
-            "WHERE p.kid = ?", nativeQuery = true)
+            "WHERE p.kid = 5", nativeQuery = true)
     List<PrerelationView> getByKId(Integer id);
 }

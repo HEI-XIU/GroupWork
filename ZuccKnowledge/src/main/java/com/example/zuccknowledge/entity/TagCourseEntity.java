@@ -1,21 +1,17 @@
 package com.example.zuccknowledge.entity;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Table(name = "tag_course", schema = "test", catalog = "")
+@Table(name = "tag_course", schema = "courses", catalog = "")
 public class TagCourseEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "tcid")
     private int tcid;
-    @Basic
-    @Column(name = "tid")
     private int tid;
-    @Basic
-    @Column(name = "cid")
     private int cid;
 
+    @Id
+    @Column(name = "tcid")
     public int getTcid() {
         return tcid;
     }
@@ -24,6 +20,8 @@ public class TagCourseEntity {
         this.tcid = tcid;
     }
 
+    @Basic
+    @Column(name = "tid")
     public int getTid() {
         return tid;
     }
@@ -32,6 +30,8 @@ public class TagCourseEntity {
         this.tid = tid;
     }
 
+    @Basic
+    @Column(name = "cid")
     public int getCid() {
         return cid;
     }
@@ -44,21 +44,12 @@ public class TagCourseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         TagCourseEntity that = (TagCourseEntity) o;
-
-        if (tcid != that.tcid) return false;
-        if (tid != that.tid) return false;
-        if (cid != that.cid) return false;
-
-        return true;
+        return tcid == that.tcid && tid == that.tid && cid == that.cid;
     }
 
     @Override
     public int hashCode() {
-        int result = tcid;
-        result = 31 * result + tid;
-        result = 31 * result + cid;
-        return result;
+        return Objects.hash(tcid, tid, cid);
     }
 }

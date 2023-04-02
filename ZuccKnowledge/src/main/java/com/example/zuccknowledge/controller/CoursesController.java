@@ -3,10 +3,13 @@ package com.example.zuccknowledge.controller;
 import com.example.zuccknowledge.entity.CoursesEntity;
 import com.example.zuccknowledge.formbean.Courses;
 import com.example.zuccknowledge.repository.CoursesRepository;
+import com.example.zuccknowledge.repository.KnowledgeRepository;
+import com.example.zuccknowledge.repository.TagAndCoursesRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +18,10 @@ import java.util.List;
 public class CoursesController {
     @Autowired
     private CoursesRepository coursesRepository;
+    @Autowired
+    private TagAndCoursesRepository tagAndCoursesRepository;
+    @Autowired
+    private KnowledgeRepository knowledgeRepository;
 
     /**
      * 获取所有课程
@@ -74,7 +81,10 @@ public class CoursesController {
      * @return
      */
     @DeleteMapping("/delete/{id}")
+    @Transactional
     public int deleteCourses(@PathVariable("id") int id) {
+        tagAndCoursesRepository.deleteByCid(id);
+        knowledgeRepository.deleteByCourseid(id);
         coursesRepository.deleteById(id);
         return 1;
     }

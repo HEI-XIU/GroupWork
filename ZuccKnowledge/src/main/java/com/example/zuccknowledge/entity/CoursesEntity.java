@@ -1,19 +1,15 @@
 package com.example.zuccknowledge.entity;
 
-import org.hibernate.annotations.Proxy;
-
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Proxy(lazy = false)
-@Table(name = "courses", schema = "course", catalog = "")
+@Table(name = "courses", schema = "courses", catalog = "")
 public class CoursesEntity {
     private int courseid;
     private String coursename;
     private String introduction;
     private String textbook;
-    private String tags;
     private String teacher;
 
     @Id
@@ -56,15 +52,6 @@ public class CoursesEntity {
         this.textbook = textbook;
     }
 
-    @Basic
-    @Column(name = "tags")
-    public String getTags() {
-        return tags;
-    }
-
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
 
     @Basic
     @Column(name = "teacher")
@@ -81,11 +68,11 @@ public class CoursesEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CoursesEntity that = (CoursesEntity) o;
-        return courseid == that.courseid && Objects.equals(coursename, that.coursename) && Objects.equals(introduction, that.introduction) && Objects.equals(textbook, that.textbook) && Objects.equals(tags, that.tags) && Objects.equals(teacher, that.teacher);
+        return courseid == that.courseid && Objects.equals(coursename, that.coursename) && Objects.equals(introduction, that.introduction) && Objects.equals(textbook, that.textbook) && Objects.equals(teacher, that.teacher);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(courseid, coursename, introduction, textbook, tags, teacher);
+        return Objects.hash(courseid, coursename, introduction, textbook, teacher);
     }
 }

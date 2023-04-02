@@ -1,12 +1,13 @@
 package com.example.zuccknowledge.controller;
 
-import com.example.zuccknowledge.entity.CasesEntity;
 import com.example.zuccknowledge.formbean.Cases;
+import com.example.zuccknowledge.entity.CasesEntity;
 import com.example.zuccknowledge.repository.CasesRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 

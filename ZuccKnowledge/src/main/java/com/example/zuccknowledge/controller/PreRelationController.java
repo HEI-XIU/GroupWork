@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -61,5 +62,16 @@ public class PreRelationController {
     public int deletePreRelation(@PathVariable("id") int id) {
         preRelationRepository.deleteById(id);
         return 1;
+    }
+
+    private List<Prerelation> convert(List<PrerelationEntity> entityList) {
+        List<Prerelation> prerelationList = new ArrayList<>();
+        entityList.stream().forEach(item -> {
+            Prerelation prerelation = new Prerelation();
+            BeanUtils.copyProperties(item, prerelation);
+            prerelationList.add(prerelation);
+        });
+
+        return prerelationList;
     }
 }

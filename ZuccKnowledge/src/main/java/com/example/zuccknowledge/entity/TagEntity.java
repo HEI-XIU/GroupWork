@@ -1,18 +1,16 @@
 package com.example.zuccknowledge.entity;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Table(name = "tag", schema = "test", catalog = "")
+@Table(name = "tag", schema = "courses", catalog = "")
 public class TagEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "tagid")
     private int tagid;
-    @Basic
-    @Column(name = "tagname")
     private String tagname;
 
+    @Id
+    @Column(name = "tagid")
     public int getTagid() {
         return tagid;
     }
@@ -21,6 +19,8 @@ public class TagEntity {
         this.tagid = tagid;
     }
 
+    @Basic
+    @Column(name = "tagname")
     public String getTagname() {
         return tagname;
     }
@@ -33,19 +33,12 @@ public class TagEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         TagEntity tagEntity = (TagEntity) o;
-
-        if (tagid != tagEntity.tagid) return false;
-        if (tagname != null ? !tagname.equals(tagEntity.tagname) : tagEntity.tagname != null) return false;
-
-        return true;
+        return tagid == tagEntity.tagid && Objects.equals(tagname, tagEntity.tagname);
     }
 
     @Override
     public int hashCode() {
-        int result = tagid;
-        result = 31 * result + (tagname != null ? tagname.hashCode() : 0);
-        return result;
+        return Objects.hash(tagid, tagname);
     }
 }

@@ -1,18 +1,17 @@
 package com.example.zuccknowledge.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
-@Table(name = "tag_group", schema = "courses", catalog = "")
-@IdClass(TagGroupEntityPK.class)
-public class TagGroupEntity {
+public class TagGroupEntityPK implements Serializable {
     private int tgid;
     private int tid;
     private int gid;
 
-    @Id
     @Column(name = "tgid")
+    @Id
     public int getTgid() {
         return tgid;
     }
@@ -21,8 +20,8 @@ public class TagGroupEntity {
         this.tgid = tgid;
     }
 
-    @Id
     @Column(name = "tid")
+    @Id
     public int getTid() {
         return tid;
     }
@@ -31,8 +30,8 @@ public class TagGroupEntity {
         this.tid = tid;
     }
 
-    @Id
     @Column(name = "gid")
+    @Id
     public int getGid() {
         return gid;
     }
@@ -45,7 +44,7 @@ public class TagGroupEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TagGroupEntity that = (TagGroupEntity) o;
+        TagGroupEntityPK that = (TagGroupEntityPK) o;
         return tgid == that.tgid && tid == that.tid && gid == that.gid;
     }
 

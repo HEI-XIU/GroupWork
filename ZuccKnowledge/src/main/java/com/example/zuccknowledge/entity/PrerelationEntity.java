@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "prerelation", schema = "course", catalog = "")
+@Table(name = "prerelation", schema = "courses", catalog = "")
 public class PrerelationEntity {
     private int preid;
     private int kid;
@@ -45,11 +45,11 @@ public class PrerelationEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PrerelationEntity that = (PrerelationEntity) o;
-        return preid == that.preid;
+        return preid == that.preid && kid == that.kid && prekid == that.prekid;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(preid);
+        return Objects.hash(preid, kid, prekid);
     }
 }
