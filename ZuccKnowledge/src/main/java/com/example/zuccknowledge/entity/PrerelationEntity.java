@@ -1,10 +1,13 @@
 package com.example.zuccknowledge.entity;
 
+import org.hibernate.annotations.Proxy;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "prerelation", schema = "courses", catalog = "")
+@Proxy(lazy = false)
 public class PrerelationEntity {
     private int preid;
     private int kid;

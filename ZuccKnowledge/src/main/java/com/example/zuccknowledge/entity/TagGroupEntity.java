@@ -1,10 +1,13 @@
 package com.example.zuccknowledge.entity;
 
+import org.hibernate.annotations.Proxy;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tag_group", schema = "courses", catalog = "")
+@Proxy(lazy = false)
 @IdClass(TagGroupEntityPK.class)
 public class TagGroupEntity {
     private int tgid;

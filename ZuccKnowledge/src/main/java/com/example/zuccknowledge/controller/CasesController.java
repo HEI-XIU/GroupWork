@@ -53,6 +53,18 @@ public class CasesController {
         return convert(casesRepository.getByNameLike("%" + nameLike + "%"));
     }
 
+
+    /**
+     * 根据KnowledgeID模糊查询案例
+     *
+     * @param KIdLike
+     * @return
+     */
+    @GetMapping("/byKId/{KIdLike}")
+    List<Cases> getByKIdLike(@PathVariable String KIdLike) {
+        return convert(casesRepository.getByKIdLike("%" + KIdLike + "%"));
+    }
+
     /**
      * 添加/修改案例
      *
