@@ -68,18 +68,18 @@ public class TagController {
         return 1;
     }
     @PostMapping("/linkByName")
-    public int linkTagGroupByName( @RequestBody RequestParam requestParam){
-        TagGroupEntity tagGroupEntity = new TagGroupEntity();
-        int tid = tagRepository.findByTagname(requestParam.getTname().toString());
-        int gid = groupRepository.findByGname(requestParam.getGname().toString());
-        tagGroupEntity.setTid(tid);
-        tagGroupEntity.setGid(gid);
-        System.out.println(tagGroupEntity.getTid());
-        if(tagAndGroupRepository.countByTidAndGid(tagGroupEntity.getTid(),tagGroupEntity.getGid())==0){
-            tagAndGroupRepository.save(tagGroupEntity);
-        }
-        return 1;
-    }
+//    public int linkTagGroupByName( @RequestBody RequestParam requestParam){
+//        TagGroupEntity tagGroupEntity = new TagGroupEntity();
+//        int tid = tagRepository.findByTagname(requestParam.getTname().toString());
+//        int gid = groupRepository.findByGname(requestParam.getGname().toString());
+//        tagGroupEntity.setTid(tid);
+//        tagGroupEntity.setGid(gid);
+//        System.out.println(tagGroupEntity.getTid());
+//        if(tagAndGroupRepository.countByTidAndGid(tagGroupEntity.getTid(),tagGroupEntity.getGid())==0){
+//            tagAndGroupRepository.save(tagGroupEntity);
+//        }
+//        return 1;
+//    }
     private List<Tag> convert(List<TagEntity> entityList) {
         List<Tag> TagList = new ArrayList<>();
         entityList.stream().forEach(item -> {
