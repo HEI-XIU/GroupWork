@@ -8,7 +8,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -46,9 +45,14 @@ public class PreRelationController {
      */
     @PostMapping("/save")
     public int savePreRelation(@RequestBody Prerelation prerelation) {
-        PrerelationEntity prerelationEntity = new PrerelationEntity();
-        BeanUtils.copyProperties(prerelation, prerelationEntity);
-        preRelationRepository.save(prerelationEntity);
+        try {
+            PrerelationEntity prerelationEntity = new PrerelationEntity();
+            BeanUtils.copyProperties(prerelation, prerelationEntity);
+            preRelationRepository.save(prerelationEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
         return 1;
     }
 
@@ -60,18 +64,12 @@ public class PreRelationController {
      */
     @DeleteMapping("/delete/{id}")
     public int deletePreRelation(@PathVariable("id") int id) {
-        preRelationRepository.deleteById(id);
+        try {
+            preRelationRepository.deleteById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
         return 1;
-    }
-
-    private List<Prerelation> convert(List<PrerelationEntity> entityList) {
-        List<Prerelation> prerelationList = new ArrayList<>();
-        entityList.stream().forEach(item -> {
-            Prerelation prerelation = new Prerelation();
-            BeanUtils.copyProperties(item, prerelation);
-            prerelationList.add(prerelation);
-        });
-
-        return prerelationList;
     }
 }
