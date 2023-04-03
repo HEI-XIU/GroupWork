@@ -16,4 +16,6 @@ public interface PreRelationRepository extends JpaRepository<PrerelationEntity, 
             "FROM prerelation p LEFT JOIN knowledge k ON (p.prekid = k.kid)" +
             "WHERE p.kid = 5", nativeQuery = true)
     List<PrerelationView> getByKId(Integer id);
+
+    void deleteByKid(Integer Kid);
 }

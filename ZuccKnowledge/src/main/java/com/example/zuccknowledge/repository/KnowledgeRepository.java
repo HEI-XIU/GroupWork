@@ -1,13 +1,14 @@
 package com.example.zuccknowledge.repository;
 
 import com.example.zuccknowledge.entity.KnowledgeEntity;
-import com.example.zuccknowledge.entity.TgroupEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
 public interface KnowledgeRepository extends JpaRepository<KnowledgeEntity, Integer> {
+    List<KnowledgeEntity> findByCourseid(Integer CId);
+
     /**
      * 模糊查询知识点名称
      *
