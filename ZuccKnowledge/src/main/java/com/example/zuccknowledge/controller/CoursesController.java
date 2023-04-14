@@ -39,7 +39,7 @@ public class CoursesController {
      * @param id
      * @return
      */
-    @GetMapping("/byId/{id}")
+    @GetMapping("/byid/{id}")
     Courses getById(@PathVariable Integer id) {
         CoursesEntity coursesEntity = coursesRepository.getReferenceById(id);
         Courses courses = new Courses();
@@ -54,7 +54,7 @@ public class CoursesController {
      * @param nameLike
      * @return
      */
-    @GetMapping("/byName/{nameLike}")
+    @GetMapping("/byname/{nameLike}")
     List<Courses> getByNameLike(@PathVariable String nameLike) {
         return convert(coursesRepository.getByNameLike("%" + nameLike + "%"));
     }
