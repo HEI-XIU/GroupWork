@@ -36,7 +36,7 @@ public class TagAndGroupController {
      * 根据标签的id删除标签组与标签的对应关系
      * @param tid
      */
-    @PostMapping("/deleteTag/{tid}")
+    @PostMapping("/deletetag/{tid}")
     void deleteTag(@PathVariable int tid){ tagAndGroupRepository.deleteByTid(tid);}
     /**
      * 标签组的操作
@@ -44,7 +44,7 @@ public class TagAndGroupController {
      * @param gid
      * @return
      */
-    @GetMapping("/byTid/{gid}")
+    @GetMapping("/bytid/{gid}")
     List<TagEntity> getByGid(@PathVariable Integer gid) {
         return tagRepository.getByGid(gid);
     }
@@ -53,7 +53,7 @@ public class TagAndGroupController {
      * @param tagAndGroup
      * @return
      */
-    @PostMapping("/linkById")
+    @PostMapping("/linkbyid")
     public int linkTagGroupById(@RequestBody TagAndGroup tagAndGroup){
         TagGroupEntity tagGroupEntity =new TagGroupEntity();
 //        System.out.println(tagAndGroupRepository.findByTidAndGid(tagAndGroup.getTid(),tagAndGroup.getGid()));
@@ -69,7 +69,7 @@ public class TagAndGroupController {
      * @param requestParam
      * @return
      */
-    @PostMapping("/linkByName")
+    @PostMapping("/linkbyname")
     public int linkTagGroupByName( @RequestBody RequestParam requestParam){
         TagGroupEntity tagGroupEntity = new TagGroupEntity();
         int tid = tagRepository.findByTagname(requestParam.getTname().toString());
@@ -89,7 +89,7 @@ public class TagAndGroupController {
      * @param gid
      * @return
      */
-    @PostMapping("/deleteGroup/{gid}")
+    @PostMapping("/deletegroup/{gid}")
     int deleteGroup(@PathVariable int gid){return tagAndGroupRepository.deleteByGid(gid);}
     /**
      * 标签的操作
@@ -97,7 +97,7 @@ public class TagAndGroupController {
      * @param tid
      * @return
      */
-    @GetMapping("/byGid/{tid}")
+    @GetMapping("/bygid/{tid}")
     List<TgroupEntity> getByTid(@PathVariable Integer tid) {
         return groupRepository.getByTid(tid);
     }
