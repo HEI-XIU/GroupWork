@@ -27,7 +27,7 @@ public class TagAndKnowledgeController {
      * @param tid
      * @return
      */
-    @PostMapping("/knowledgeDeleteTag/{tid}")
+    @PostMapping("/knowledgedeletetag/{tid}")
     int knowledgeDeleteTag(@PathVariable int tid){return tagAndKnowledgeRepository.deleteByTid(tid);}
     /**
      * 知识点操作
@@ -35,7 +35,7 @@ public class TagAndKnowledgeController {
      * @param tagAndKnowledge
      * @return
      */
-    @PostMapping("/knowledgAddTag")
+    @PostMapping("/knowledgaddtag")
     int knowledgAddTag(@RequestBody TagAndKnowledge tagAndKnowledge){
         TagKonwledgeEntity tagKonwledgeEntity = new TagKonwledgeEntity();
         if(tagAndKnowledgeRepository.countByKidAndTid(tagAndKnowledge.getKid(),tagAndKnowledge.getTid())==0){
@@ -50,7 +50,7 @@ public class TagAndKnowledgeController {
      * @param tagAndKnowledge
      * @return
      */
-    @PostMapping("/knowledgUpdateTag")
+    @PostMapping("/knowledgupdatetag")
     int knowledgUpdateTag(@RequestBody TagAndKnowledge tagAndKnowledge){
         TagKonwledgeEntity tagKonwledgeEntity = new TagKonwledgeEntity();
         if(tagAndKnowledgeRepository.countByTkid(tagAndKnowledge.getTkid())!=0){
@@ -65,7 +65,7 @@ public class TagAndKnowledgeController {
      * @param id
      * @return
      */
-    @GetMapping("/byKid/{id}")
+    @GetMapping("/bykid/{id}")
     List<TagEntity> getByKid(@PathVariable Integer id) {
         return tagRepository.getByKid(id);
     }
@@ -75,7 +75,7 @@ public class TagAndKnowledgeController {
      * @param kid
      * @return
      */
-    @PostMapping("/tagDeleteKnowledge/{kid}")
+    @PostMapping("/tagdeleteknowledge/{kid}")
     int tagDeleteKnowledge(@PathVariable int kid){return tagAndKnowledgeRepository.deleteByKid(kid);}
 
     /**
@@ -83,7 +83,7 @@ public class TagAndKnowledgeController {
      * @param tid
      * @return
      */
-    @GetMapping("/byGid/{tid}")
+    @GetMapping("/bygid/{tid}")
     List<KnowledgeEntity> getByTid(@PathVariable Integer tid) {
         return knowledgeRepository.getByTid(tid);
     }}
