@@ -25,13 +25,13 @@ public class TagGroupController {
         return convert(tgRepository.findAll());
     }
     //根据id获取标签组
-    @GetMapping("/byId/{id}")
+    @GetMapping("/byid/{id}")
     Optional<TgroupEntity> getById(@PathVariable Integer id){
         Optional<TgroupEntity> tgEntity = tgRepository.findById(id);
         return tgEntity;
     }
     //根据标签组名模糊获取标签组
-    @GetMapping("/byName/{nameLike}")
+    @GetMapping("/byname/{nameLike}")
     List<TagGroup> getByName(@PathVariable String nameLike){
         return convert(tgRepository.getNameLike("%"+nameLike+"%"));
     }
