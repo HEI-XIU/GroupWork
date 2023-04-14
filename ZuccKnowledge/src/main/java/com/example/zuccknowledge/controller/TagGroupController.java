@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/tagGroup")
+@RequestMapping("/taggroup")
 public class TagGroupController {
     @Autowired
     private GroupRepository tgRepository;
