@@ -51,6 +51,12 @@ public class KnowledgeController {
         return knowledge;
     }
 
+    /**
+     * 根据courseid获取某课程所有知识点
+     *
+     * @param CId
+     * @return
+     */
     @GetMapping("/byCId/{CId}")
     List<Knowledge> getByCId(@PathVariable Integer CId) {
         return convert(knowledgeRepository.findByCourseid(CId));
