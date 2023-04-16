@@ -42,7 +42,7 @@ public class KnowledgeController {
      * @param id
      * @return
      */
-    @GetMapping("/byId/{id}")
+    @GetMapping("/byid/{id}")
     Knowledge getById(@PathVariable Integer id) {
         KnowledgeEntity knowledgeEntity = knowledgeRepository.getReferenceById(id);
         Knowledge knowledge = new Knowledge();
@@ -51,13 +51,7 @@ public class KnowledgeController {
         return knowledge;
     }
 
-    /**
-     * 根据courseid获取某课程所有知识点
-     *
-     * @param CId
-     * @return
-     */
-    @GetMapping("/byCId/{CId}")
+    @GetMapping("/bycid/{CId}")
     List<Knowledge> getByCId(@PathVariable Integer CId) {
         return convert(knowledgeRepository.findByCourseid(CId));
     }
@@ -68,7 +62,7 @@ public class KnowledgeController {
      * @param nameLike
      * @return
      */
-    @GetMapping("/byName/{nameLike}")
+    @GetMapping("/byname/{nameLike}")
     List<Knowledge> getByNameLike(@PathVariable String nameLike) {
         return convert(knowledgeRepository.getByNameLike("%" + nameLike + "%"));
     }

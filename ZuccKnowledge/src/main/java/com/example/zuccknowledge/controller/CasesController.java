@@ -33,7 +33,7 @@ public class CasesController {
      * @param id
      * @return
      */
-    @GetMapping("/byId/{id}")
+    @GetMapping("/byid/{id}")
     Cases getById(@PathVariable Integer id) {
         CasesEntity casesEntity = casesRepository.getReferenceById(id);
         Cases cases = new Cases();
@@ -48,7 +48,7 @@ public class CasesController {
      * @param nameLike
      * @return
      */
-    @GetMapping("/byName/{nameLike}")
+    @GetMapping("/byname/{nameLike}")
     List<Cases> getByNameLike(@PathVariable String nameLike) {
         return convert(casesRepository.getByNameLike("%" + nameLike + "%"));
     }
@@ -60,7 +60,7 @@ public class CasesController {
      * @param KIdLike
      * @return
      */
-    @GetMapping("/byKId/{KIdLike}")
+    @GetMapping("/bykid/{KIdLike}")
     List<Cases> getByKIdLike(@PathVariable String KIdLike) {
         return convert(casesRepository.getByKIdLike("%" + KIdLike + "%"));
     }

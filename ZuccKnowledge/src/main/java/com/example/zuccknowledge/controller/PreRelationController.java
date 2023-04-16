@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/preRelation")
+@RequestMapping("/prerelation")
 public class PreRelationController {
     @Autowired
     private PreRelationRepository preRelationRepository;
@@ -32,7 +32,7 @@ public class PreRelationController {
      * @param id
      * @return
      */
-    @GetMapping("/byId/{id}")
+    @GetMapping("/byid/{id}")
     List<PrerelationView> getById(@PathVariable Integer id) {
         return preRelationRepository.getByKId(id);
     }
