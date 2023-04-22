@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/tag")
+@RequestMapping("api/tags")
 public class TagController {
     @Autowired
     private TagRepository tagRepository;
@@ -27,16 +27,14 @@ public class TagController {
     @Autowired
     private GroupRepository groupRepository;
 
-    @GetMapping("/all")
+    @GetMapping()
     List<Tag> getAll() {
         return convert(tagRepository.findAll());
     }
-    @GetMapping("/byid/{id}")
+    @GetMapping("{id}")
     Optional<TagEntity> getById(@PathVariable Integer id){
         Optional<TagEntity> tagEntity = tagRepository.findById(id);
         System.out.println(tagEntity.toString());
-//        Tag tag = new Tag();
-//        BeanUtils.copyProperties(tagEntity,tag);
         return tagEntity;
     }
     @GetMapping("/byname/{nameLike}")
@@ -51,7 +49,13 @@ public class TagController {
         tagRepository.save(tagEntity);
         return 1;
     }
-    @PostMapping("/delete/{id}")
+
+    /**
+     * 根据id删除标签
+     * @param id
+     * @return
+     */
+    @DeleteMapping("{id}")
     public int deleteTag(@PathVariable int id){
         tagRepository.deleteById(id);
         return 1;
