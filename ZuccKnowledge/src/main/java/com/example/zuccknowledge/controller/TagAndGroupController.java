@@ -4,19 +4,24 @@ import com.example.zuccknowledge.entity.TagEntity;
 import com.example.zuccknowledge.entity.TagGroupEntity;
 import com.example.zuccknowledge.entity.TgroupEntity;
 import com.example.zuccknowledge.formbean.PrerelationView;
+import com.example.zuccknowledge.formbean.Tag;
 import com.example.zuccknowledge.formbean.TagAndGroup;
+import com.example.zuccknowledge.formbean.TagGroup;
 import com.example.zuccknowledge.repository.GroupRepository;
 import com.example.zuccknowledge.repository.TagAndGroupRepository;
 import com.example.zuccknowledge.repository.TagRepository;
 import com.example.zuccknowledge.utils.RequestParam;
+import com.example.zuccknowledge.utils.ReturnCode;
+import com.example.zuccknowledge.utils.ReturnVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.beans.Expression;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tagc")//tag and group controller
+@RequestMapping("/api/taggroups")//tag and group controller
 public class TagAndGroupController {
     @Autowired
     private TagAndGroupRepository tagAndGroupRepository;
@@ -24,30 +29,56 @@ public class TagAndGroupController {
     private TagRepository tagRepository;
     @Autowired
     private GroupRepository groupRepository;
-    //考虑到没有修改标签的对应关系需求（或者说需求不明显）， 这里就没编写，如果哦有需求可进行添加
+
     /**
      * 获得所有的标签与标签组的对应关系
      * @return
      */
-    @GetMapping("/rbtag")//relationship between tag and group
-    List<TagGroupEntity> getAll(){return tagAndGroupRepository.findAll();}
+    @GetMapping()//relationship between tag and group
+    ReturnVO getAll(){
+        List<TagGroupEntity> tags;
+        try {
+            tags=tagAndGroupRepository.findAll();
+        }  catch (Exception e) {
+            e.printStackTrace();
+            return new ReturnVO(ReturnCode.FAIL);
+        }
+        return new ReturnVO(tags);
+}
     /**
      * 标签组的操作
      * 根据标签的id删除标签组与标签的对应关系
      * @param tid
+     * //后期修改位用事务进行处理
      */
-    @PostMapping("/deletetag/{tid}")
-    void deleteTag(@PathVariable int tid){ tagAndGroupRepository.deleteByTid(tid);}
+    @DeleteMapping("tags/{tid}")
+    ReturnVO deleteTag(@PathVariable int tid){
+        try{
+            tagAndGroupRepository.deleteByTid(tid);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ReturnVO(ReturnCode.FAIL);
+        }
+        return new ReturnVO();
+       }
     /**
      * 标签组的操作
      * 根据标签组的id查所包含的标签
      * @param gid
      * @return
      */
-    @GetMapping("/bytid/{gid}")
-    List<TagEntity> getByGid(@PathVariable Integer gid) {
-        return tagRepository.getByGid(gid);
+    @GetMapping("/tags/{gid}")
+    ReturnVO getByGid(@PathVariable Integer gid) {
+        List<TagEntity> tags;
+        try{
+           tags = tagRepository.getByGid(gid);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ReturnVO(ReturnCode.FAIL);
+        }
+        return new ReturnVO(tags);
     }
+
     /**
      * 根据tagid和groupid来建立两者的关系
      * @param tagAndGroup
@@ -89,16 +120,31 @@ public class TagAndGroupController {
      * @param gid
      * @return
      */
-    @PostMapping("/deletegroup/{gid}")
-    int deleteGroup(@PathVariable int gid){return tagAndGroupRepository.deleteByGid(gid);}
+    @DeleteMapping ("/tags/{gid}")
+    ReturnVO deleteGroup(@PathVariable int gid){
+        try {
+            tagAndGroupRepository.deleteByGid(gid);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ReturnVO(ReturnCode.FAIL);
+        }
+        return new ReturnVO();
+    }
     /**
      * 标签的操作
      * 根据标签id查所在的标签组有哪些组
      * @param tid
      * @return
      */
-    @GetMapping("/bygid/{tid}")
-    List<TgroupEntity> getByTid(@PathVariable Integer tid) {
-        return groupRepository.getByTid(tid);
+    @GetMapping("/groups/{tid}")
+    ReturnVO getByTid(@PathVariable Integer tid) {
+        List<TgroupEntity> groups;
+        try{
+            groups = groupRepository.getByTid(tid);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ReturnVO(ReturnCode.FAIL);
+        }
+        return new ReturnVO(groups);
     }
 }
