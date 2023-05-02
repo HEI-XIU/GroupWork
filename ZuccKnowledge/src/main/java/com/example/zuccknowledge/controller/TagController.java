@@ -8,8 +8,8 @@ import com.example.zuccknowledge.formbean.TagAndGroup;
 import com.example.zuccknowledge.repository.TagAndGroupRepository;
 import com.example.zuccknowledge.repository.GroupRepository;
 import com.example.zuccknowledge.repository.TagRepository;
-import com.example.zuccknowledge.utils.ReturnCode;
-import com.example.zuccknowledge.utils.ReturnVO;
+import com.example.zuccknowledge.result.zk.ReturnCode;
+import com.example.zuccknowledge.result.zk.ReturnVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/tags")
+@RequestMapping("api/tags/v1/")
 
 public class TagController {
     @Autowired
@@ -67,8 +67,9 @@ public class TagController {
      *
      * @param nameLike
      * @return
+     * 对应前端功能描述：对输入字进行模糊查询，并返回给下拉列表，当为空时，侧获取所有的tags
      */
-    @GetMapping("/byname/{nameLike}")
+    @GetMapping("{nameLike}")
     List<Tag> getByName(@PathVariable String nameLike){
         return convert(tagRepository.getNameLike("%"+nameLike+"%"));
     }
@@ -79,7 +80,7 @@ public class TagController {
      * @param tag
      * @return
      */
-    @PostMapping("/save")
+    @PostMapping("save")
     public ReturnVO saveTag(@RequestBody Tag tag){
         try {
             TagEntity tagEntity = new TagEntity();
@@ -92,7 +93,7 @@ public class TagController {
         return new ReturnVO();
     }
 
-    
+
     /**
      * 根据id删除标签
      * @param id
@@ -109,7 +110,7 @@ public class TagController {
         return new ReturnVO();
     }
 
-    @PostMapping("/linkbyid")
+    @PostMapping("linkbyid")
     public int linkTagGroupById(@RequestBody TagAndGroup tagAndGroup){
         TagGroupEntity tagGroupEntity =new TagGroupEntity();
 //        System.out.println(tagAndGroupRepository.findByTidAndGid(tagAndGroup.getTid(),tagAndGroup.getGid()));
@@ -120,7 +121,7 @@ public class TagController {
         }
         return 1;
     }
-    @PostMapping("/linkbyname")
+    @PostMapping("linkbyname")
 //    public int linkTagGroupByName( @RequestBody RequestParam requestParam){
 //        TagGroupEntity tagGroupEntity = new TagGroupEntity();
 //        int tid = tagRepository.findByTagname(requestParam.getTname().toString());

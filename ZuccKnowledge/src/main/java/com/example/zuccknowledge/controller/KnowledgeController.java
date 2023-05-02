@@ -1,30 +1,19 @@
 package com.example.zuccknowledge.controller;
 
-import com.example.zuccknowledge.entity.KnowledgeEntity;
-import com.example.zuccknowledge.formbean.Knowledge;
-import com.example.zuccknowledge.repository.CasesRepository;
-import com.example.zuccknowledge.repository.KnowledgeRepository;
-import com.example.zuccknowledge.repository.PreRelationRepository;
-import com.example.zuccknowledge.repository.TagAndKnowledgeRepository;
-import org.springframework.beans.BeanUtils;
+import com.example.zuccknowledge.formbean.KnowledgeDto;
+import com.example.zuccknowledge.result.ResponseData;
+import com.example.zuccknowledge.result.ResponseMsg;
+import com.example.zuccknowledge.service.KnowledgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/knowledge")
+@RequestMapping("/api/knowledge/v1")
 public class KnowledgeController {
     @Autowired
-    private KnowledgeRepository knowledgeRepository;
-    @Autowired
-    private PreRelationRepository preRelationRepository;
-    @Autowired
-    private CasesRepository casesRepository;
-    @Autowired
-    private TagAndKnowledgeRepository tagAndKnowledgeRepository;
+    private KnowledgeService knowledgeService;
 
     /**
      * 获取所有知识点
@@ -32,8 +21,9 @@ public class KnowledgeController {
      * @return
      */
     @GetMapping("/all")
-    List<Knowledge> getAll() {
-        return convert(knowledgeRepository.findAll());
+    public ResponseData getAll() {
+        List<KnowledgeDto> knowledgeDto = knowledgeService.getAll();
+        return new ResponseData(ResponseMsg.SUCCESS, knowledgeDto);
     }
 
     /**
@@ -43,17 +33,21 @@ public class KnowledgeController {
      * @return
      */
     @GetMapping("/byid/{id}")
-    Knowledge getById(@PathVariable Integer id) {
-        KnowledgeEntity knowledgeEntity = knowledgeRepository.getReferenceById(id);
-        Knowledge knowledge = new Knowledge();
-        BeanUtils.copyProperties(knowledgeEntity, knowledge);
-
-        return knowledge;
+    public ResponseData getById(@PathVariable Integer id) {
+        KnowledgeDto knowledgeDto = knowledgeService.getById(id);
+        return new ResponseData(ResponseMsg.SUCCESS, knowledgeDto);
     }
 
+    /**
+     * 根据courseid获取其所有知识点
+     *
+     * @param CId
+     * @return
+     */
     @GetMapping("/bycid/{CId}")
-    List<Knowledge> getByCId(@PathVariable Integer CId) {
-        return convert(knowledgeRepository.findByCourseid(CId));
+    public ResponseData getByCId(@PathVariable Integer CId) {
+        List<KnowledgeDto> knowledgeDtos = knowledgeService.getByCId(CId);
+        return new ResponseData(ResponseMsg.SUCCESS, knowledgeDtos);
     }
 
     /**
@@ -63,27 +57,21 @@ public class KnowledgeController {
      * @return
      */
     @GetMapping("/byname/{nameLike}")
-    List<Knowledge> getByNameLike(@PathVariable String nameLike) {
-        return convert(knowledgeRepository.getByNameLike("%" + nameLike + "%"));
+    public ResponseData getByNameLike(@PathVariable String nameLike) {
+        List<KnowledgeDto> knowledgeDtos = knowledgeService.getByNameLike(nameLike);
+        return new ResponseData(ResponseMsg.SUCCESS, knowledgeDtos);
     }
 
     /**
      * 添加/修改知识点
      *
-     * @param knowledge
+     * @param knowledgeDto
      * @return
      */
     @PostMapping("/save")
-    public int saveKnowledge(@RequestBody Knowledge knowledge) {
-        try {
-            KnowledgeEntity knowledgeEntity = new KnowledgeEntity();
-            BeanUtils.copyProperties(knowledge, knowledgeEntity);
-            knowledgeRepository.save(knowledgeEntity);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-        return 1;
+    public ResponseData saveKnowledge(@RequestBody KnowledgeDto knowledgeDto) {
+        knowledgeService.saveKnowledge(knowledgeDto);
+        return new ResponseData(ResponseMsg.SUCCESS);
     }
 
     /**
@@ -94,27 +82,8 @@ public class KnowledgeController {
      */
     @Transactional
     @DeleteMapping("/delete/{id}")
-    public int deleteKnowledge(@PathVariable("id") int id) {
-        try {
-            casesRepository.deleteByKnowledgeid(id);
-            preRelationRepository.deleteByKid(id);
-            tagAndKnowledgeRepository.deleteByKid(id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-        knowledgeRepository.deleteById(id);
-        return 1;
-    }
-
-    private List<Knowledge> convert(List<KnowledgeEntity> entityList) {
-        List<Knowledge> knowledgeList = new ArrayList<>();
-        entityList.stream().forEach(item -> {
-            Knowledge knowledge = new Knowledge();
-            BeanUtils.copyProperties(item, knowledge);
-            knowledgeList.add(knowledge);
-        });
-
-        return knowledgeList;
+    public ResponseData deleteKnowledge(@PathVariable("id") int id) {
+        knowledgeService.deleteKnowledge(id);
+        return new ResponseData(ResponseMsg.SUCCESS);
     }
 }

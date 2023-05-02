@@ -1,8 +1,7 @@
-package com.example.zuccknowledge.utils;
+package com.example.zuccknowledge.result.zk;
 
 /**
- * @author vi
- * @since 2019/1/2 5:43 PM
+ *
  */
 public class CommonUrl {
 

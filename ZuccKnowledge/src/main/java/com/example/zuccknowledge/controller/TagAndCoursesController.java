@@ -3,14 +3,14 @@ package com.example.zuccknowledge.controller;
 import com.example.zuccknowledge.entity.TagCourseEntity;
 import com.example.zuccknowledge.formbean.TagAndCourses;
 import com.example.zuccknowledge.repository.TagAndCoursesRepository;
-import com.example.zuccknowledge.utils.ReturnCode;
-import com.example.zuccknowledge.utils.ReturnVO;
+import com.example.zuccknowledge.result.zk.ReturnCode;
+import com.example.zuccknowledge.result.zk.ReturnVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/tag_courses/")
+@RequestMapping("api/tag_courses/v1/")
 public class TagAndCoursesController {
     @Autowired
     private TagAndCoursesRepository tagAndCoursesRepository;

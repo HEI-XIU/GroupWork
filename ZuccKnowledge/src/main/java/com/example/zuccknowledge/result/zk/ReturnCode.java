@@ -1,4 +1,4 @@
-package com.example.zuccknowledge.utils;
+package com.example.zuccknowledge.result.zk;
 
 @SuppressWarnings("ALL")
 public enum ReturnCode {

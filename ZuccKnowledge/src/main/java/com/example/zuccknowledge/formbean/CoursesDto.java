@@ -3,7 +3,7 @@ package com.example.zuccknowledge.formbean;
 import lombok.Data;
 
 @Data
-public class Courses {
+public class CoursesDto {
     private int courseid;
     private String coursename;
     private String introduction;

@@ -1,4 +1,4 @@
-package com.example.zuccknowledge.utils;
+package com.example.zuccknowledge.result.zk;
 
 import java.io.*;
 import java.util.Iterator;
@@ -6,8 +6,6 @@ import java.util.Properties;
 
 /**
  * 读取*.properties中的属性
- * @author vi
- * @since 2018/12/24 7:33 PM
  */
 public class ReadPropertiesUtil {
 
