@@ -5,15 +5,15 @@ import com.example.zuccknowledge.formbean.TagAndKnowledge;
 import com.example.zuccknowledge.repository.KnowledgeRepository;
 import com.example.zuccknowledge.repository.TagAndKnowledgeRepository;
 import com.example.zuccknowledge.repository.TagRepository;
-import com.example.zuccknowledge.utils.ReturnCode;
-import com.example.zuccknowledge.utils.ReturnVO;
+import com.example.zuccknowledge.result.zk.ReturnCode;
+import com.example.zuccknowledge.result.zk.ReturnVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @RestController
-@RequestMapping("/api/tag_knowledges") //tag and knowledge controller
+@RequestMapping("/api/tag_knowledges/v1") //tag and knowledge controller
 public class TagAndKnowledgeController {
     @Autowired
     private TagAndKnowledgeRepository tagAndKnowledgeRepository;
@@ -87,7 +87,7 @@ public class TagAndKnowledgeController {
      * 知识点修改相应的tag
      * @return
      */
-    @PostMapping("/knowledges")
+    @PutMapping("/knowledges")
     ReturnVO knowledgUpdateTag(int kid, int tid) {
         TagAndKnowledge tagAndKnowledge = null;
         TagKnowledgeEntity tagKnowledgeEntity = new TagKnowledgeEntity();

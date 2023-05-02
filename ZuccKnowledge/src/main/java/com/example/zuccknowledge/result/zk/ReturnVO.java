@@ -1,12 +1,9 @@
-package com.example.zuccknowledge.utils;
+package com.example.zuccknowledge.result.zk;
 
 import java.util.Properties;
 
 /**
  * 统一定义返回类
- *
- * @author yangwei
- * @since 2018/12/20
  */
 public class ReturnVO {
 
