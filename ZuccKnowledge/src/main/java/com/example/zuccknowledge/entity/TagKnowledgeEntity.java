@@ -1,20 +1,21 @@
 package com.example.zuccknowledge.entity;
 
-import org.hibernate.annotations.Proxy;
-
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
-@Table(name = "tag_konwledge", schema = "courses", catalog = "")
-@Proxy(lazy = false)
-public class TagKonwledgeEntity {
-    private int tkid;
-    private int tid;
-    private int kid;
-
+@Table(name = "tag_knowledge", schema = "test", catalog = "")
+public class TagKnowledgeEntity {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "tkid")
+    private int tkid;
+    @Basic
+    @Column(name = "tid")
+    private int tid;
+    @Basic
+    @Column(name = "kid")
+    private int kid;
+
     public int getTkid() {
         return tkid;
     }
@@ -23,8 +24,6 @@ public class TagKonwledgeEntity {
         this.tkid = tkid;
     }
 
-    @Basic
-    @Column(name = "tid")
     public int getTid() {
         return tid;
     }
@@ -33,8 +32,6 @@ public class TagKonwledgeEntity {
         this.tid = tid;
     }
 
-    @Basic
-    @Column(name = "kid")
     public int getKid() {
         return kid;
     }
@@ -47,12 +44,21 @@ public class TagKonwledgeEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TagKonwledgeEntity that = (TagKonwledgeEntity) o;
-        return tkid == that.tkid && tid == that.tid && kid == that.kid;
+
+        TagKnowledgeEntity that = (TagKnowledgeEntity) o;
+
+        if (tkid != that.tkid) return false;
+        if (tid != that.tid) return false;
+        if (kid != that.kid) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tkid, tid, kid);
+        int result = tkid;
+        result = 31 * result + tid;
+        result = 31 * result + kid;
+        return result;
     }
 }

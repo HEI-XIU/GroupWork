@@ -1,13 +1,13 @@
 package com.example.zuccknowledge.repository;
 
-import com.example.zuccknowledge.entity.TagKonwledgeEntity;
+import com.example.zuccknowledge.entity.TagKnowledgeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
 
-public interface TagAndKnowledgeRepository extends JpaRepository<TagKonwledgeEntity,Integer> {
+public interface TagAndKnowledgeRepository extends JpaRepository<TagKnowledgeEntity,Integer> {
 //    @Query(value = "delete tag_knowledge tid =?1",nativeQuery = true)
     @Modifying
     @Transactional
@@ -23,4 +23,6 @@ public interface TagAndKnowledgeRepository extends JpaRepository<TagKonwledgeEnt
 
     @Query(value = "select count(*) from tag_knowledge where kid =?1 and tid =?2",nativeQuery = true)
     int countByKidAndTid(int kid,int tid);
+//    @Query(value = "insert into tag_knowledge (tid kid) values (?2,?1)",nativeQuery = true)
+//    TagKonwledgeEntity existsByKidAndKid (int kid,int tid);
 }

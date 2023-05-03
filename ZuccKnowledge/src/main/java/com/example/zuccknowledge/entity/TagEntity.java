@@ -6,11 +6,19 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tag", schema = "courses", catalog = "")
+@Table(name = "tag", schema = "test", catalog = "")
 @Proxy(lazy = false)
 public class TagEntity {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "tagid")
     private int tagid;
+    @Basic
+    @Column(name = "tagname")
     private String tagname;
+    @Basic
+    @Column(name = "tagroot")
+    private Integer tagroot;
 
     @Id
     @Column(name = "tagid")
@@ -43,5 +51,13 @@ public class TagEntity {
     @Override
     public int hashCode() {
         return Objects.hash(tagid, tagname);
+    }
+
+    public Integer getTagroot() {
+        return tagroot;
+    }
+
+    public void setTagroot(Integer tagroot) {
+        this.tagroot = tagroot;
     }
 }

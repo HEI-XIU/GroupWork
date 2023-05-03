@@ -1,27 +1,19 @@
 package com.example.zuccknowledge.controller;
 
-import com.example.zuccknowledge.entity.CoursesEntity;
-import com.example.zuccknowledge.formbean.Courses;
-import com.example.zuccknowledge.repository.CoursesRepository;
-import com.example.zuccknowledge.repository.KnowledgeRepository;
-import com.example.zuccknowledge.repository.TagAndCoursesRepository;
-import org.springframework.beans.BeanUtils;
+import com.example.zuccknowledge.formbean.CoursesDto;
+import com.example.zuccknowledge.result.ResponseData;
+import com.example.zuccknowledge.result.ResponseMsg;
+import com.example.zuccknowledge.service.CoursesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
+import javax.transaction.Transactional;
 
 @RestController
-@RequestMapping("/courses")
+@RequestMapping("/api/courses/v1")
 public class CoursesController {
     @Autowired
-    private CoursesRepository coursesRepository;
-    @Autowired
-    private TagAndCoursesRepository tagAndCoursesRepository;
-    @Autowired
-    private KnowledgeRepository knowledgeRepository;
+    private CoursesService coursesService;
 
     /**
      * 获取所有课程
@@ -29,8 +21,9 @@ public class CoursesController {
      * @return
      */
     @GetMapping("/all")
-    List<Courses> getAll() {
-        return convert(coursesRepository.findAll());
+    public ResponseData getAll() {
+        List<CoursesDto> coursesDto = coursesService.getAll();
+        return new ResponseData(ResponseMsg.SUCCESS, coursesDto);
     }
 
     /**
@@ -40,12 +33,9 @@ public class CoursesController {
      * @return
      */
     @GetMapping("/byid/{id}")
-    Courses getById(@PathVariable Integer id) {
-        CoursesEntity coursesEntity = coursesRepository.getReferenceById(id);
-        Courses courses = new Courses();
-        BeanUtils.copyProperties(coursesEntity, courses);
-
-        return courses;
+    public ResponseData getById(@PathVariable Integer id) {
+        CoursesDto coursesDto = coursesService.getById(id);
+        return new ResponseData(ResponseMsg.SUCCESS, coursesDto);
     }
 
     /**
@@ -55,23 +45,21 @@ public class CoursesController {
      * @return
      */
     @GetMapping("/byname/{nameLike}")
-    List<Courses> getByNameLike(@PathVariable String nameLike) {
-        return convert(coursesRepository.getByNameLike("%" + nameLike + "%"));
+    public ResponseData getByNameLike(@PathVariable String nameLike) {
+        List<CoursesDto> coursesDtos = coursesService.getByNameLike(nameLike);
+        return new ResponseData(ResponseMsg.SUCCESS, coursesDtos);
     }
 
     /**
      * 添加/修改课程
      *
-     * @param courses
+     * @param coursesDto
      * @return
      */
     @PostMapping("/save")
-    public int saveKnowledge(@RequestBody Courses courses) {
-        CoursesEntity coursesEntity = new CoursesEntity();
-        BeanUtils.copyProperties(courses, coursesEntity);
-        coursesRepository.save(coursesEntity);
-
-        return 1;
+    public ResponseData saveKnowledge(@RequestBody CoursesDto coursesDto) {
+        coursesService.saveKnowledge(coursesDto);
+        return new ResponseData(ResponseMsg.SUCCESS);
     }
 
     /**
@@ -80,23 +68,10 @@ public class CoursesController {
      * @param id
      * @return
      */
-    @DeleteMapping("/delete/{id}")
     @Transactional
-    public int deleteCourses(@PathVariable("id") int id) {
-        tagAndCoursesRepository.deleteByCid(id);
-        knowledgeRepository.deleteByCourseid(id);
-        coursesRepository.deleteById(id);
-        return 1;
-    }
-
-    private List<Courses> convert(List<CoursesEntity> entityList) {
-        List<Courses> coursesList = new ArrayList<>();
-        entityList.stream().forEach(item -> {
-            Courses courses = new Courses();
-            BeanUtils.copyProperties(item, courses);
-            coursesList.add(courses);
-        });
-
-        return coursesList;
+    @DeleteMapping("/delete/{id}")
+    public ResponseData deleteCourses(@PathVariable("id") int id) {
+        coursesService.deleteCourses(id);
+        return new ResponseData(ResponseMsg.SUCCESS);
     }
 }

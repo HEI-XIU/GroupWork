@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TagRepository extends JpaRepository<TagEntity,Integer>{
 //    List<TagEntity> findAll();
@@ -24,4 +25,9 @@ public interface TagRepository extends JpaRepository<TagEntity,Integer>{
     @Query(value = "select DISTINCT * from tag t ,tag_knowlege tk WHERE t.tagid = tk.tid and tk.kid = ?1 ", nativeQuery = true)
     List<TagEntity> getByKid(Integer id);
 
+//    Optional<Object> findById(Long id);
+//
+//    TagEntity findByName(String name);
+//
+//    void deleteById(Long id);
 }
