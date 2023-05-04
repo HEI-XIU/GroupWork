@@ -1,5 +1,6 @@
 package com.example.zuccknowledge.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.example.zuccknowledge.entity.CasesEntity;
 import com.example.zuccknowledge.exception.EchoServiceException;
 import com.example.zuccknowledge.formbean.CasesDto;
@@ -7,16 +8,26 @@ import com.example.zuccknowledge.repository.CasesRepository;
 import com.example.zuccknowledge.service.CasesService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CasesServiceImpl implements CasesService {
     @Autowired
     private CasesRepository casesRepository;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    public static final String SCORE_RANK = "score_rank";
+
+
 //    @Autowired
 //    private TagAndCoursesRepository tagAndCoursesRepository;
 
@@ -104,6 +115,23 @@ public class CasesServiceImpl implements CasesService {
             e.printStackTrace();
             throw new EchoServiceException("删除失败");
         }
+    }
+
+    /**
+     * 获取案例点赞排名方法实现类
+     *
+     * @auther HEI-XIU
+     */
+    @Override
+    public Collection<ZSetOperations.TypedTuple<String>> getTop20Cases() {
+//        redisTemplate.opsForValue();
+        Set<String> range = redisTemplate.opsForZSet().reverseRange(SCORE_RANK, 0, 19);
+        System.out.println("获取到的排行列表:" + JSON.toJSONString(range));
+        Set<ZSetOperations.TypedTuple<String>> rangeWithScores = redisTemplate.opsForZSet().reverseRangeWithScores(SCORE_RANK, 0, 19);
+        System.out.println("获取到的排行和分数列表:" + JSON.toJSONString(rangeWithScores));
+
+        return rangeWithScores;
+
     }
 
     private List<CasesDto> convert(List<CasesEntity> entityList) {

@@ -4,18 +4,27 @@ import com.example.zuccknowledge.formbean.CasesDto;
 import com.example.zuccknowledge.entity.CasesEntity;
 import com.example.zuccknowledge.formbean.CoursesDto;
 import com.example.zuccknowledge.formbean.KnowledgeDto;
+import com.example.zuccknowledge.formbean.Tag;
 import com.example.zuccknowledge.repository.CasesRepository;
 import com.example.zuccknowledge.result.ResponseData;
 import com.example.zuccknowledge.result.ResponseMsg;
+import com.example.zuccknowledge.result.zk.ReturnCode;
+import com.example.zuccknowledge.result.zk.ReturnVO;
 import com.example.zuccknowledge.service.CasesService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
 
 import java.util.ArrayList;
+
+import static com.example.zuccknowledge.service.impl.CasesServiceImpl.SCORE_RANK;
 
 @RestController
 @RequestMapping("/api/cases/v1")
@@ -120,6 +129,41 @@ public class CasesController {
         casesService.deleteCases(id);
         return new ResponseData(ResponseMsg.SUCCESS);
     }
+
+    /**
+     *
+     * @auther HEI-XIU
+     *
+     */
+    @GetMapping("/top20cases")
+    public ReturnVO getTop20Cases(){
+        Collection<ZSetOperations.TypedTuple<String>> tags;
+        try {
+            tags=casesService.getTop20Cases();
+        }  catch (Exception e) {
+            e.printStackTrace();
+            return new ReturnVO(ReturnCode.FAIL);
+        }
+        return new ReturnVO(tags);
+
+
+//        casesService.getTop20Cases();
+//        return new ReturnVO(ResponseMsg.SUCCESS);
+    }
+
+    /**
+     * 单个新增
+     */
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+    @PostMapping("/test")
+    public void add() {
+        redisTemplate.opsForZSet().add(SCORE_RANK, "shaj四", 99);
+    }
+
+
+
+
 
     private List<CasesDto> convert(List<CasesEntity> entityList) {
         List<CasesDto> casesList = new ArrayList<>();
