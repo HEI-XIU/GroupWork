@@ -1,8 +1,10 @@
 package com.example.zuccknowledge.service;
 
 import com.example.zuccknowledge.formbean.CasesDto;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -55,4 +57,10 @@ public interface CasesService {
      */
     void deleteCases(int id);
 
+    /**
+     * 获取案例点赞排名
+     *
+     * @auther HEI-XIU
+     */
+    Collection<ZSetOperations.TypedTuple<String>> getTop20Cases();
 }

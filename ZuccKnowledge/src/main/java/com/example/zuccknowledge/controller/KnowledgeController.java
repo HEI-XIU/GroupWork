@@ -32,9 +32,9 @@ public class KnowledgeController {
      * @param id
      * @return
      */
-    @GetMapping("/byid/{id}")
-    public ResponseData getById(@PathVariable Integer id) {
-        KnowledgeDto knowledgeDto = knowledgeService.getById(id);
+    @GetMapping("/byid/{id}/{reader}")
+    public ResponseData getById(@PathVariable Integer id, @PathVariable Integer reader) {
+        KnowledgeDto knowledgeDto = knowledgeService.getById(id, reader);
         return new ResponseData(ResponseMsg.SUCCESS, knowledgeDto);
     }
 
