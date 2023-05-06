@@ -1,23 +1,24 @@
 package com.example.zuccknowledge.service.impl;
 
+import com.example.zuccknowledge.entity.KReadRecordEntity;
 import com.example.zuccknowledge.entity.KnowledgeEntity;
 import com.example.zuccknowledge.exception.EchoServiceException;
 import com.example.zuccknowledge.formbean.KnowledgeDto;
-import com.example.zuccknowledge.repository.CasesRepository;
-import com.example.zuccknowledge.repository.KnowledgeRepository;
-import com.example.zuccknowledge.repository.PreRelationRepository;
-import com.example.zuccknowledge.repository.TagAndKnowledgeRepository;
+import com.example.zuccknowledge.repository.*;
 import com.example.zuccknowledge.service.KnowledgeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class KnowledgeServiceImpl implements KnowledgeService {
+    @Autowired
+    KReadRecordRepository kReadRecordRepository;
     @Autowired
     private KnowledgeRepository knowledgeRepository;
     @Autowired
@@ -44,10 +45,21 @@ public class KnowledgeServiceImpl implements KnowledgeService {
      * @return
      */
     @Override
-    public KnowledgeDto getById(Integer id) {
+    public KnowledgeDto getById(Integer id, Integer reader) {
         KnowledgeEntity knowledgeEntity = knowledgeRepository.getReferenceById(id);
         if (knowledgeEntity == null) {
             throw new EchoServiceException("没有找到id为 " + id + " 的知识点");
+        }
+
+        try {
+            KReadRecordEntity kReadRecordEntity = new KReadRecordEntity();
+            kReadRecordEntity.setKid(id);
+            kReadRecordEntity.setReader(reader);
+            kReadRecordEntity.setOpentime(new Timestamp(System.currentTimeMillis()));
+            kReadRecordRepository.save(kReadRecordEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EchoServiceException("添加失败");
         }
 
         KnowledgeDto knowledgeDto = new KnowledgeDto();

@@ -19,7 +19,7 @@ public interface KnowledgeService {
      * @param id
      * @return
      */
-    KnowledgeDto getById(Integer id);
+    KnowledgeDto getById(Integer id, Integer reader);
 
     /**
      * 根据courseid获取其所有知识点
