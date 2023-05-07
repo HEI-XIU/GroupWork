@@ -1,5 +1,6 @@
 package com.example.zuccknowledge.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.example.zuccknowledge.entity.KReadRecordEntity;
 import com.example.zuccknowledge.entity.KnowledgeEntity;
 import com.example.zuccknowledge.exception.EchoServiceException;
@@ -8,12 +9,17 @@ import com.example.zuccknowledge.repository.*;
 import com.example.zuccknowledge.service.KnowledgeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class KnowledgeServiceImpl implements KnowledgeService {
@@ -27,6 +33,10 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     private CasesRepository casesRepository;
     @Autowired
     private TagAndKnowledgeRepository tagAndKnowledgeRepository;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    public static final String SCORE_RANK = "score_rank";
 
     /**
      * 获取所有知识点
@@ -136,6 +146,22 @@ public class KnowledgeServiceImpl implements KnowledgeService {
             throw new EchoServiceException("删除失败");
         }
         knowledgeRepository.deleteById(id);
+    }
+
+    /**
+     * 获取知识点热度排名方法实现类
+     *
+     * @auther zzt
+     */
+    @Override
+    public Collection<ZSetOperations.TypedTuple<String>> getTop20Knowledges() {
+        Set<String> range = redisTemplate.opsForZSet().reverseRange(SCORE_RANK, 0, 19);
+        System.out.println("获取到的排行列表:" + JSON.toJSONString(range));
+        Set<ZSetOperations.TypedTuple<String>> rangeWithScores = redisTemplate.opsForZSet().reverseRangeWithScores(SCORE_RANK, 0, 19);
+        System.out.println("获取到的排行和分数列表:" + JSON.toJSONString(rangeWithScores));
+
+        return rangeWithScores;
+
     }
 
     private List<KnowledgeDto> convert(List<KnowledgeEntity> entityList) {
