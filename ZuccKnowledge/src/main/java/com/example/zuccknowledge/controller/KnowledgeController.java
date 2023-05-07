@@ -3,11 +3,18 @@ package com.example.zuccknowledge.controller;
 import com.example.zuccknowledge.formbean.KnowledgeDto;
 import com.example.zuccknowledge.result.ResponseData;
 import com.example.zuccknowledge.result.ResponseMsg;
+import com.example.zuccknowledge.result.zk.ReturnCode;
+import com.example.zuccknowledge.result.zk.ReturnVO;
 import com.example.zuccknowledge.service.KnowledgeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
+
+import static com.example.zuccknowledge.service.impl.CasesServiceImpl.SCORE_RANK;
 
 @RestController
 @RequestMapping("/api/knowledge/v1")
@@ -85,5 +92,32 @@ public class KnowledgeController {
     public ResponseData deleteKnowledge(@PathVariable("id") int id) {
         knowledgeService.deleteKnowledge(id);
         return new ResponseData(ResponseMsg.SUCCESS);
+    }
+
+    /**
+     * 获取知识点点赞排名
+     * @auther zzt
+     *
+     */
+    @GetMapping("/top20knowledges")
+    public ReturnVO getTop20Knowledges(){
+        Collection<ZSetOperations.TypedTuple<String>> tags;
+        try {
+            tags=knowledgeService.getTop20Knowledges();
+        }  catch (Exception e) {
+            e.printStackTrace();
+            return new ReturnVO(ReturnCode.FAIL);
+        }
+        return new ReturnVO(tags);
+    }
+
+    /**
+     * 单个新增
+     */
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+    @PostMapping("/test")
+    public void add() {
+        redisTemplate.opsForZSet().add(SCORE_RANK, "shaj四", 99);
     }
 }
