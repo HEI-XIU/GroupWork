@@ -1,7 +1,10 @@
 package com.example.zuccknowledge.service;
 
 import com.example.zuccknowledge.formbean.KnowledgeDto;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -52,4 +55,11 @@ public interface KnowledgeService {
      * @return
      */
     void deleteKnowledge(int id);
+
+    /**
+     * 获取知识点点赞排名
+     *
+     * @auther zzt
+     */
+    Collection<ZSetOperations.TypedTuple<String>> getTop20Knowledges();
 }
