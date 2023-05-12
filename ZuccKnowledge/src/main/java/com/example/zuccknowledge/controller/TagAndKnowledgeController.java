@@ -1,12 +1,16 @@
 package com.example.zuccknowledge.controller;
 
 import com.example.zuccknowledge.entity.*;
-import com.example.zuccknowledge.formbean.TagAndKnowledge;
+import com.example.zuccknowledge.exception.EchoServiceException;
+import com.example.zuccknowledge.formbean.KnowledgeDto;
+import com.example.zuccknowledge.formbean.TagAndKnowledgeDto;
+import com.example.zuccknowledge.formbean.TagDto;
 import com.example.zuccknowledge.repository.KnowledgeRepository;
 import com.example.zuccknowledge.repository.TagAndKnowledgeRepository;
 import com.example.zuccknowledge.repository.TagRepository;
 import com.example.zuccknowledge.result.zk.ReturnCode;
 import com.example.zuccknowledge.result.zk.ReturnVO;
+import com.example.zuccknowledge.service.TagAndKnowledgeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,16 +25,17 @@ public class TagAndKnowledgeController {
     private TagRepository tagRepository;
     @Autowired
     private KnowledgeRepository knowledgeRepository;
-
+    @Autowired
+    TagAndKnowledgeService tagAndKnowledgeService;
     /**
      * 获得所有相关信息
      * @return
      */
     @GetMapping("")//relationship between tag and group
     ReturnVO getAll(){
-        List<TagKnowledgeEntity> tag_knowledges;
-        try{
-            tag_knowledges = tagAndKnowledgeRepository.findAll();
+        List<TagAndKnowledgeDto> tag_knowledges;
+        try {
+            tag_knowledges = tagAndKnowledgeService.getAll();
         }catch (Exception e){
             e.printStackTrace();
             return new ReturnVO(ReturnCode.FAIL);
@@ -48,7 +53,8 @@ public class TagAndKnowledgeController {
     @DeleteMapping("/knowledges/{tid}")
     ReturnVO knowledgeDeleteTag(@PathVariable int tid){
         try{
-            tagAndKnowledgeRepository.deleteByTid(tid);
+            tagAndKnowledgeService.knowledgeDeleteTag(tid);
+//            tagAndKnowledgeRepository.deleteByTid(tid);
         }catch (Exception e){
             e.printStackTrace();
             return new ReturnVO(ReturnCode.FAIL);
@@ -64,21 +70,28 @@ public class TagAndKnowledgeController {
      */
     @PostMapping("/knowledges")
     ReturnVO knowledgAddTag(int kid, int tid){
-        TagAndKnowledge tagAndKnowledge = null;
-        TagKnowledgeEntity tagKnowledgeEntity = new TagKnowledgeEntity();
         try{
-            tagAndKnowledge = new TagAndKnowledge(kid,tid);
-            BeanUtils.copyProperties(tagAndKnowledge,tagKnowledgeEntity);
-            if(tagAndKnowledgeRepository.countByKidAndTid(kid,tid)==0){
-                tagAndKnowledgeRepository.save(tagKnowledgeEntity);
-            } else {
-                return new ReturnVO(ReturnCode.FAIL ,"已存在该关系的建立");
-            }
-        }catch (Exception e){
+            tagAndKnowledgeService.knowledgAddTag(kid,tid);
+        }catch (EchoServiceException e){
             e.printStackTrace();
-            return new ReturnVO(ReturnCode.FAIL, tagKnowledgeEntity.toString());
+            return new ReturnVO(e);
         }
-        return new ReturnVO(tagKnowledgeEntity);
+       return new ReturnVO();
+//        TagAndKnowledgeDto tagAndKnowledgeDto = null;
+//        TagKnowledgeEntity tagKnowledgeEntity = new TagKnowledgeEntity();
+//        try{
+//            tagAndKnowledgeDto = new TagAndKnowledgeDto(kid,tid);
+//            BeanUtils.copyProperties(tagAndKnowledgeDto,tagKnowledgeEntity);
+//            if(tagAndKnowledgeRepository.countByKidAndTid(kid,tid)==0){
+//                tagAndKnowledgeRepository.save(tagKnowledgeEntity);
+//            } else {
+//                return new ReturnVO(ReturnCode.FAIL ,"已存在该关系的建立");
+//            }
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return new ReturnVO(ReturnCode.FAIL, tagKnowledgeEntity.toString());
+//        }
+//        return new ReturnVO(tagKnowledgeEntity);
     }
 
 
@@ -89,21 +102,29 @@ public class TagAndKnowledgeController {
      */
     @PutMapping("/knowledges")
     ReturnVO knowledgUpdateTag(int kid, int tid) {
-        TagAndKnowledge tagAndKnowledge = null;
-        TagKnowledgeEntity tagKnowledgeEntity = new TagKnowledgeEntity();
-        try {
-            tagAndKnowledge = new TagAndKnowledge(kid, tid);
-            BeanUtils.copyProperties(tagAndKnowledge, tagKnowledgeEntity);
-            if (tagAndKnowledgeRepository.countByKidAndTid(kid, tid) == 1) {
-                tagAndKnowledgeRepository.save(tagKnowledgeEntity);
-            } else {
-                return new ReturnVO(ReturnCode.FAIL, "不存在对应关系");
-            }
-        } catch (Exception e) {
+        try{
+            tagAndKnowledgeService.knowledgUpdateTag(kid,tid);
+        }catch (EchoServiceException e){
             e.printStackTrace();
-            return new ReturnVO(ReturnCode.FAIL, tagKnowledgeEntity.toString());
+            return new ReturnVO(e);
         }
-        return new ReturnVO(tagKnowledgeEntity);
+        return new ReturnVO();
+
+//        TagAndKnowledgeDto tagAndKnowledgeDto = null;
+//        TagKnowledgeEntity tagKnowledgeEntity = new TagKnowledgeEntity();
+//        try {
+//            tagAndKnowledgeDto = new TagAndKnowledgeDto(kid, tid);
+//            BeanUtils.copyProperties(tagAndKnowledgeDto, tagKnowledgeEntity);
+//            if (tagAndKnowledgeRepository.countByKidAndTid(kid, tid) == 1) {
+//                tagAndKnowledgeRepository.save(tagKnowledgeEntity);
+//            } else {
+//                return new ReturnVO(ReturnCode.FAIL, "不存在对应关系");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ReturnVO(ReturnCode.FAIL, tagKnowledgeEntity.toString());
+//        }
+//        return new ReturnVO(tagKnowledgeEntity);
     }
 
 
@@ -114,9 +135,9 @@ public class TagAndKnowledgeController {
      */
     @GetMapping("/knowledges/{kid}")
     ReturnVO getByKid(@PathVariable Integer id) {
-        List<TagEntity> tags;
+        List<TagDto> tags;
         try{
-            tags = tagRepository.getByKid(id);
+            tags = tagAndKnowledgeService.getByKid(id);
         }catch (Exception e){
             e.printStackTrace();
             return new ReturnVO(ReturnCode.FAIL);
@@ -134,7 +155,7 @@ public class TagAndKnowledgeController {
     @PostMapping("/tags/{kid}")
     ReturnVO tagDeleteKnowledge(@PathVariable int kid){
         try{
-            tagAndKnowledgeRepository.deleteByKid(kid);
+            tagAndKnowledgeService.tagDeleteKnowledge(kid);
         }catch (Exception e){
             e.printStackTrace();
             return new ReturnVO(ReturnCode.FAIL);
@@ -150,9 +171,9 @@ public class TagAndKnowledgeController {
      */
     @GetMapping("/knowledges/{tid}")
     ReturnVO getByTid(@PathVariable Integer tid) {
-        List<KnowledgeEntity> knowledges;
+        List<KnowledgeDto> knowledges;
         try{
-            knowledges=knowledgeRepository.getByTid(tid);
+            knowledges=tagAndKnowledgeService.getByTid(tid);
         }catch (Exception e){
             e.printStackTrace();
             return new ReturnVO(ReturnCode.FAIL);

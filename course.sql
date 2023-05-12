@@ -107,25 +107,25 @@ INSERT INTO `prerelation` VALUES ('2', '5', '3');
 INSERT INTO `prerelation` VALUES ('3', '5', '1');
 
 -- ----------------------------
--- Table structure for tag
+-- Table structure for tagDto
 -- ----------------------------
-DROP TABLE IF EXISTS `tag`;
-CREATE TABLE `tag` (
+DROP TABLE IF EXISTS `tagDto`;
+CREATE TABLE `tagDto` (
   `tagid` int(11) NOT NULL AUTO_INCREMENT,
   `tagname` varchar(255) NOT NULL,
   PRIMARY KEY (`tagid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
--- Records of tag
+-- Records of tagDto
 -- ----------------------------
-INSERT INTO `tag` VALUES ('1', '计算机');
-INSERT INTO `tag` VALUES ('2', '编程');
-INSERT INTO `tag` VALUES ('3', '前端');
-INSERT INTO `tag` VALUES ('5', '后端');
-INSERT INTO `tag` VALUES ('6', '技术');
-INSERT INTO `tag` VALUES ('7', '技术');
-INSERT INTO `tag` VALUES ('8', '技术');
+INSERT INTO `tagDto` VALUES ('1', '计算机');
+INSERT INTO `tagDto` VALUES ('2', '编程');
+INSERT INTO `tagDto` VALUES ('3', '前端');
+INSERT INTO `tagDto` VALUES ('5', '后端');
+INSERT INTO `tagDto` VALUES ('6', '技术');
+INSERT INTO `tagDto` VALUES ('7', '技术');
+INSERT INTO `tagDto` VALUES ('8', '技术');
 
 -- ----------------------------
 -- Table structure for tag_course
@@ -139,7 +139,7 @@ CREATE TABLE `tag_course` (
   KEY `tid` (`tid`),
   KEY `cid` (`cid`),
   CONSTRAINT `tag_course_ibfk_2` FOREIGN KEY (`cid`) REFERENCES `courses` (`courseid`),
-  CONSTRAINT `tag_course_ibfk_1` FOREIGN KEY (`tid`) REFERENCES `tag` (`tagid`)
+  CONSTRAINT `tag_course_ibfk_1` FOREIGN KEY (`tid`) REFERENCES `tagDto` (`tagid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -160,7 +160,7 @@ CREATE TABLE `tag_group` (
   KEY `tid` (`tid`),
   KEY `gid` (`gid`),
   CONSTRAINT `tag_group_ibfk_2` FOREIGN KEY (`gid`) REFERENCES `tgroup` (`gid`),
-  CONSTRAINT `tag_group_ibfk_1` FOREIGN KEY (`tid`) REFERENCES `tag` (`tagid`)
+  CONSTRAINT `tag_group_ibfk_1` FOREIGN KEY (`tid`) REFERENCES `tagDto` (`tagid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -181,7 +181,7 @@ CREATE TABLE `tag_konwledge` (
   KEY `tid` (`tid`),
   KEY `kid` (`kid`),
   CONSTRAINT `tag_konwledge_ibfk_2` FOREIGN KEY (`kid`) REFERENCES `knowledge` (`kid`),
-  CONSTRAINT `tag_konwledge_ibfk_1` FOREIGN KEY (`tid`) REFERENCES `tag` (`tagid`)
+  CONSTRAINT `tag_konwledge_ibfk_1` FOREIGN KEY (`tid`) REFERENCES `tagDto` (`tagid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------

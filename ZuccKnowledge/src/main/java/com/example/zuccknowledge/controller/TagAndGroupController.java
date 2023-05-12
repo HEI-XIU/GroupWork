@@ -3,7 +3,7 @@ package com.example.zuccknowledge.controller;
 import com.example.zuccknowledge.entity.TagEntity;
 import com.example.zuccknowledge.entity.TagGroupEntity;
 import com.example.zuccknowledge.entity.TgroupEntity;
-import com.example.zuccknowledge.formbean.TagAndGroup;
+import com.example.zuccknowledge.formbean.TagAndGroupDto;
 import com.example.zuccknowledge.repository.GroupRepository;
 import com.example.zuccknowledge.repository.TagAndGroupRepository;
 import com.example.zuccknowledge.repository.TagRepository;
@@ -77,16 +77,16 @@ public class TagAndGroupController {
 
     /**
      * 根据tagid和groupid来建立两者的关系
-     * @param tagAndGroup
+     * @param tagAndGroupDto
      * @return
      */
     @PostMapping("/linkbyid")
-    public int linkTagGroupById(@RequestBody TagAndGroup tagAndGroup){
+    public int linkTagGroupById(@RequestBody TagAndGroupDto tagAndGroupDto){
         TagGroupEntity tagGroupEntity =new TagGroupEntity();
-//        System.out.println(tagAndGroupRepository.findByTidAndGid(tagAndGroup.getTid(),tagAndGroup.getGid()));
-        System.out.println(tagAndGroup.getTid()+" "+tagAndGroup.getGid());
-        if(tagAndGroupRepository.countByTidAndGid(tagAndGroup.getTid(),tagAndGroup.getGid())==0){
-            BeanUtils.copyProperties(tagAndGroup,tagGroupEntity);
+//        System.out.println(tagAndGroupRepository.findByTidAndGid(tagAndGroupDto.getTid(),tagAndGroupDto.getGid()));
+        System.out.println(tagAndGroupDto.getTid()+" "+ tagAndGroupDto.getGid());
+        if(tagAndGroupRepository.countByTidAndGid(tagAndGroupDto.getTid(), tagAndGroupDto.getGid())==0){
+            BeanUtils.copyProperties(tagAndGroupDto,tagGroupEntity);
             tagAndGroupRepository.save(tagGroupEntity);
         }
         return 1;

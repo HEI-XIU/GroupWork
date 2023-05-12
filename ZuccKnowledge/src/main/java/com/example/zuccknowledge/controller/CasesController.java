@@ -2,10 +2,6 @@ package com.example.zuccknowledge.controller;
 
 import com.example.zuccknowledge.formbean.CasesDto;
 import com.example.zuccknowledge.entity.CasesEntity;
-import com.example.zuccknowledge.formbean.CoursesDto;
-import com.example.zuccknowledge.formbean.KnowledgeDto;
-import com.example.zuccknowledge.formbean.Tag;
-import com.example.zuccknowledge.repository.CasesRepository;
 import com.example.zuccknowledge.result.ResponseData;
 import com.example.zuccknowledge.result.ResponseMsg;
 import com.example.zuccknowledge.result.zk.ReturnCode;
@@ -17,7 +13,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;

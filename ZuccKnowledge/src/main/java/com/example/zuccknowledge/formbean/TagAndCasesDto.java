@@ -1,7 +1,10 @@
 package com.example.zuccknowledge.formbean;
+
 import lombok.Data;
+
 @Data
-public class Tag {
+public class TagAndCasesDto {
+    private int tagcaseid;
+    private int casesid;
     private int tagid;
-    private String tagname;
 }

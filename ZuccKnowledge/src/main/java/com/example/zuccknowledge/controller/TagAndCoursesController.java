@@ -1,10 +1,11 @@
 package com.example.zuccknowledge.controller;
 
 import com.example.zuccknowledge.entity.TagCourseEntity;
-import com.example.zuccknowledge.formbean.TagAndCourses;
+import com.example.zuccknowledge.formbean.TagAndCoursesDto;
 import com.example.zuccknowledge.repository.TagAndCoursesRepository;
 import com.example.zuccknowledge.result.zk.ReturnCode;
 import com.example.zuccknowledge.result.zk.ReturnVO;
+import com.example.zuccknowledge.service.TagAndCourseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,20 +15,25 @@ import org.springframework.web.bind.annotation.*;
 public class TagAndCoursesController {
     @Autowired
     private TagAndCoursesRepository tagAndCoursesRepository;
-
+    @Autowired
+    private TagAndCourseService tagAndCourseService;
     /**
      * 添加课程与标签的关系
      *
-     * @param tagAndCourses
+     * @param tagAndCoursesDto
      * @return
      */
     @PostMapping("save")
-    public int saveKnowledge(@RequestBody TagAndCourses tagAndCourses) {
-        TagCourseEntity tagCourseEntity = new TagCourseEntity();
-        BeanUtils.copyProperties(tagAndCourses, tagCourseEntity);
-        tagAndCoursesRepository.save(tagCourseEntity);
-
-        return 1;
+    ReturnVO saveKnowledge(@RequestBody TagAndCoursesDto tagAndCoursesDto) {
+//        TagCourseEntity tagCourseEntity = new TagCourseEntity();
+//        BeanUtils.copyProperties(tagAndCoursesDto, tagCourseEntity);
+        try{
+            tagAndCourseService.saveKnowledge(tagAndCoursesDto);
+        }catch (Exception e){
+            e.printStackTrace();
+             return new ReturnVO(ReturnCode.FAIL);
+        }
+        return new ReturnVO();
     }
 
     /**
@@ -39,7 +45,7 @@ public class TagAndCoursesController {
     @DeleteMapping("courses/{id}")
     public ReturnVO deleteCourses(@PathVariable("id") int id) {
         try {
-            tagAndCoursesRepository.deleteById(id);
+            tagAndCourseService.deleteCourses(id);
         }catch (Exception e){
             e.printStackTrace();
             return new ReturnVO(ReturnCode.FAIL);

@@ -1,22 +1,62 @@
 package com.example.zuccknowledge.service;
 
-import com.example.zuccknowledge.entity.TagEntity;
-import com.example.zuccknowledge.formbean.Tag;
+import com.example.zuccknowledge.formbean.TagDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface TagService {
-    Page<TagEntity> ListTag(Pageable pageable);
+    /**
+     * 分页查询标签
+     * @param
+     * @return
+     */
+//    Page<TagEntity> ListTag(Pageable pageable);
 
-    TagEntity saveTag(TagEntity tag);
+    List<TagDto> getAll();
+    /**
+     * 保存或修改标签
+     * @param tag
+     * @return
+     */
+    void saveTag(TagDto tag);
 
-    void deleteTag(Long id);
+    /**
+     * 根据id删除标签
+     * @param id
+     */
+    void deleteTag(int id);
 
-    TagEntity getTagByName(String name);
+    /**
+     * 根据名字查询标签的tagid
+     * @param name
+     * @return
+     */
+    int getTagByName(String name);
 
-    TagEntity getTag(Long id);
+    /**
+     * 根据id查询标签
+     * @param id
+     * @return
+     */
+    TagDto getTag(int id);
 
-    TagEntity updateTag(Long id,TagEntity tag);
+    /**
+     * 更新tag标签的操作
+     * @param id
+     * @param tag
+     * @return
+     */
+    TagDto updateTag(int id,TagDto tag);
+
+    /**
+     * 模糊查询
+     * @param nameLike
+     * @return
+     */
+    List<TagDto> getByNameLike(String nameLike);
+
 
 }
 
