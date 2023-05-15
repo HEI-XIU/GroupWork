@@ -7,6 +7,7 @@ import com.example.zuccknowledge.result.ResponseMsg;
 import com.example.zuccknowledge.result.zk.ReturnCode;
 import com.example.zuccknowledge.result.zk.ReturnVO;
 import com.example.zuccknowledge.service.CasesService;
+import com.example.zuccknowledge.service.RedisService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -26,6 +27,8 @@ import static com.example.zuccknowledge.service.impl.CasesServiceImpl.SCORE_RANK
 public class CasesController {
     @Autowired
     private CasesService casesService;
+    @Autowired
+    private RedisService redisService;
 
 //    public CasesController(CasesService casesService) {
 //        this.casesService = casesService;
@@ -155,6 +158,15 @@ public class CasesController {
     public void add() {
         redisTemplate.opsForZSet().add(SCORE_RANK, "shaj四", 99);
     }
+    @PostMapping("/test1")
+    public void test() {
+        redisService.saveLikedRedis("zk","11");
+    }
+    @PostMapping("/test2")
+    public void test2() {
+        redisService.incrementLikedCount("1");
+    }
+
 
 
 

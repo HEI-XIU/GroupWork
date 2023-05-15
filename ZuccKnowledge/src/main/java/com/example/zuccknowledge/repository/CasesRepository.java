@@ -18,6 +18,8 @@ public interface CasesRepository extends JpaRepository<CasesEntity, Integer> {
 
     @Query(value = "SELECT * FROM cases WHERE knowledgeid LIKE ?", nativeQuery = true)
     List<CasesEntity> getByKIdLike(String KIdLike);
-
+    @Query(value = "SELECT * FROM cases WHERE caseid = ?", nativeQuery = true)
+    CasesEntity getByCasesId(int id);
     void deleteByKnowledgeid(Integer KId);
+
 }

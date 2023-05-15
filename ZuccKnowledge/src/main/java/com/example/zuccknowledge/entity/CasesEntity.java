@@ -1,23 +1,34 @@
 package com.example.zuccknowledge.entity;
 
-import org.hibernate.annotations.Proxy;
-
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
-@Table(name = "cases", schema = "courses", catalog = "")
-@Proxy(lazy = false)
-public class CasesEntity {
-    private int caseid;
-    private String casename;
-    private int knowledgeid;
-    private String casecontent;
-    private byte iscode;
-    private String type;
+@Table(name = "cases", schema = "course", catalog = "")
 
+public class CasesEntity {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "caseid")
+    private int caseid;
+    @Basic
+    @Column(name = "casename")
+    private String casename;
+    @Basic
+    @Column(name = "knowledgeid")
+    private int knowledgeid;
+    @Basic
+    @Column(name = "casecontent")
+    private String casecontent;
+    @Basic
+    @Column(name = "iscode")
+    private byte iscode;
+    @Basic
+    @Column(name = "type")
+    private String type;
+    @Basic
+    @Column(name = "likes")
+    private String likes;
+
     public int getCaseid() {
         return caseid;
     }
@@ -26,8 +37,6 @@ public class CasesEntity {
         this.caseid = caseid;
     }
 
-    @Basic
-    @Column(name = "casename")
     public String getCasename() {
         return casename;
     }
@@ -36,8 +45,6 @@ public class CasesEntity {
         this.casename = casename;
     }
 
-    @Basic
-    @Column(name = "knowledgeid")
     public int getKnowledgeid() {
         return knowledgeid;
     }
@@ -46,8 +53,6 @@ public class CasesEntity {
         this.knowledgeid = knowledgeid;
     }
 
-    @Basic
-    @Column(name = "casecontent")
     public String getCasecontent() {
         return casecontent;
     }
@@ -56,8 +61,6 @@ public class CasesEntity {
         this.casecontent = casecontent;
     }
 
-    @Basic
-    @Column(name = "iscode")
     public byte getIscode() {
         return iscode;
     }
@@ -66,8 +69,6 @@ public class CasesEntity {
         this.iscode = iscode;
     }
 
-    @Basic
-    @Column(name = "type")
     public String getType() {
         return type;
     }
@@ -76,16 +77,41 @@ public class CasesEntity {
         this.type = type;
     }
 
+    public String getLikes() {
+        return likes;
+    }
+
+    public void setLikes(String likes) {
+        this.likes = likes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         CasesEntity that = (CasesEntity) o;
-        return caseid == that.caseid && knowledgeid == that.knowledgeid && iscode == that.iscode && Objects.equals(casename, that.casename) && Objects.equals(casecontent, that.casecontent) && Objects.equals(type, that.type);
+
+        if (caseid != that.caseid) return false;
+        if (knowledgeid != that.knowledgeid) return false;
+        if (iscode != that.iscode) return false;
+        if (casename != null ? !casename.equals(that.casename) : that.casename != null) return false;
+        if (casecontent != null ? !casecontent.equals(that.casecontent) : that.casecontent != null) return false;
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        if (likes != null ? !likes.equals(that.likes) : that.likes != null) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(caseid, casename, knowledgeid, casecontent, iscode, type);
+        int result = caseid;
+        result = 31 * result + (casename != null ? casename.hashCode() : 0);
+        result = 31 * result + knowledgeid;
+        result = 31 * result + (casecontent != null ? casecontent.hashCode() : 0);
+        result = 31 * result + (int) iscode;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (likes != null ? likes.hashCode() : 0);
+        return result;
     }
 }

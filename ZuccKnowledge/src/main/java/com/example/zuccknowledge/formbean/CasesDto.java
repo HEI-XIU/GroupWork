@@ -10,4 +10,5 @@ public class CasesDto {
         private String casecontent;
         private byte iscode;
         private String type;
+        private String Likes;
 }
