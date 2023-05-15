@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.example.zuccknowledge.entity.KReadRecordEntity;
 import com.example.zuccknowledge.entity.KnowledgeEntity;
 import com.example.zuccknowledge.exception.EchoServiceException;
+import com.example.zuccknowledge.formbean.KRecordRankDto;
 import com.example.zuccknowledge.formbean.KnowledgeDto;
 import com.example.zuccknowledge.repository.*;
 import com.example.zuccknowledge.service.KnowledgeService;
@@ -13,7 +14,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -23,6 +23,8 @@ import java.util.Set;
 
 @Service
 public class KnowledgeServiceImpl implements KnowledgeService {
+    public static final String HOT_RANK = "hot_rank";
+    public static final String RECORD_RANK = "k_record";
     @Autowired
     KReadRecordRepository kReadRecordRepository;
     @Autowired
@@ -35,8 +37,6 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     private TagAndKnowledgeRepository tagAndKnowledgeRepository;
     @Autowired
     private StringRedisTemplate redisTemplate;
-
-    public static final String SCORE_RANK = "score_rank";
 
     /**
      * 获取所有知识点
@@ -56,21 +56,36 @@ public class KnowledgeServiceImpl implements KnowledgeService {
      */
     @Override
     public KnowledgeDto getById(Integer id, Integer reader) {
+        Set<ZSetOperations.TypedTuple<String>> rangeWithScores = redisTemplate.opsForZSet().reverseRangeWithScores(HOT_RANK, 0, -1);
+        for (ZSetOperations.TypedTuple<String> rangeWithScore : rangeWithScores) {
+            System.out.println(rangeWithScore.getValue());
+            System.out.println(Integer.parseInt(rangeWithScore.getValue()) == id);
+            if (Integer.parseInt(rangeWithScore.getValue()) == id) {
+                System.out.println(rangeWithScore.getScore());
+                redisTemplate.opsForZSet().incrementScore(HOT_RANK, rangeWithScore.getValue(), 1);
+                break;
+            }
+        }
+
         KnowledgeEntity knowledgeEntity = knowledgeRepository.getReferenceById(id);
+
         if (knowledgeEntity == null) {
             throw new EchoServiceException("没有找到id为 " + id + " 的知识点");
         }
 
-        try {
+//        try {
             KReadRecordEntity kReadRecordEntity = new KReadRecordEntity();
             kReadRecordEntity.setKid(id);
             kReadRecordEntity.setReader(reader);
             kReadRecordEntity.setOpentime(new Timestamp(System.currentTimeMillis()));
-            kReadRecordRepository.save(kReadRecordEntity);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new EchoServiceException("添加失败");
-        }
+//            kReadRecordRepository.save(kReadRecordEntity);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new EchoServiceException("添加失败");
+//        }
+        redisTemplate.opsForList().rightPush("k_record", JSON.toJSONString(kReadRecordEntity));
+        System.out.println("aaaaaaaaaa");
+        System.out.println(redisTemplate.opsForList().range("k_record", 0, -1));
 
         KnowledgeDto knowledgeDto = new KnowledgeDto();
         BeanUtils.copyProperties(knowledgeEntity, knowledgeDto);
@@ -117,6 +132,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
      * @return
      */
     @Override
+    @Transactional
     public void saveKnowledge(KnowledgeDto knowledgeDto) {
         try {
             KnowledgeEntity knowledgeEntity = new KnowledgeEntity();
@@ -125,6 +141,11 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         } catch (Exception e) {
             e.printStackTrace();
             throw new EchoServiceException("添加/修改失败");
+        }
+
+        System.out.println(knowledgeDto.getKid());
+        if (knowledgeDto.getKid() == 0) {
+            redisTemplate.opsForZSet().add(HOT_RANK, String.valueOf(knowledgeRepository.getMaxKid()), 0);
         }
     }
 
@@ -146,6 +167,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
             throw new EchoServiceException("删除失败");
         }
         knowledgeRepository.deleteById(id);
+        redisTemplate.opsForZSet().remove(HOT_RANK, id + "");
     }
 
     /**
@@ -155,13 +177,25 @@ public class KnowledgeServiceImpl implements KnowledgeService {
      */
     @Override
     public Collection<ZSetOperations.TypedTuple<String>> getTop20Knowledges() {
-        Set<String> range = redisTemplate.opsForZSet().reverseRange(SCORE_RANK, 0, 19);
-        System.out.println("获取到的排行列表:" + JSON.toJSONString(range));
-        Set<ZSetOperations.TypedTuple<String>> rangeWithScores = redisTemplate.opsForZSet().reverseRangeWithScores(SCORE_RANK, 0, 19);
+        hotRankRedis();
+
+        Set<ZSetOperations.TypedTuple<String>> rangeWithScores = redisTemplate.opsForZSet().reverseRangeWithScores(HOT_RANK, 0, 19);
         System.out.println("获取到的排行和分数列表:" + JSON.toJSONString(rangeWithScores));
 
         return rangeWithScores;
+    }
 
+    private void hotRankRedis() {
+        Set<ZSetOperations.TypedTuple<String>> rangeWithScores = redisTemplate.opsForZSet().reverseRangeWithScores(HOT_RANK, 0, 19);
+        System.out.println("获取到的排行和分数列表:" + JSON.toJSONString(rangeWithScores));
+        System.out.println(rangeWithScores.size());
+        if (rangeWithScores.size() == 0) {
+            List<KRecordRankDto> kRecordRankDtoList = knowledgeRepository.getKRecordRank();
+            for (KRecordRankDto kRecordRankDto : kRecordRankDtoList) {
+                redisTemplate.opsForZSet().add(HOT_RANK, String.valueOf(kRecordRankDto.getKid()), kRecordRankDto.getRank());
+            }
+            System.out.println("当前使用mysql：获取所有知识点信息");
+        }
     }
 
     private List<KnowledgeDto> convert(List<KnowledgeEntity> entityList) {

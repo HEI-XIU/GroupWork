@@ -1,6 +1,7 @@
 package com.example.zuccknowledge.repository;
 
 import com.example.zuccknowledge.entity.KnowledgeEntity;
+import com.example.zuccknowledge.formbean.KRecordRankDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -28,4 +29,17 @@ public interface KnowledgeRepository extends JpaRepository<KnowledgeEntity, Inte
      * @return
      */
     void deleteByCourseid(Integer id);
+
+    @Query(value = "SELECT k.kid, count(r.kid) rank\n" +
+            "FROM knowledge k LEFT JOIN k_read_record r on (k.kid = r.kid)\n" +
+            "GROUP BY k.kid\n" +
+            "ORDER BY rank DESC", nativeQuery = true)
+    List<KRecordRankDto> getKRecordRank();
+
+    @Query(value = "SELECT kid max FROM knowledge\n" +
+            "HAVING kid >= ALL (\n" +
+            "SELECT kid\n" +
+            "FROM knowledge\n" +
+            ")", nativeQuery = true)
+    int getMaxKid();
 }
