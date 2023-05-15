@@ -1,23 +1,28 @@
 package com.example.zuccknowledge.entity;
 
-import org.hibernate.annotations.Proxy;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Objects;
 
 @Entity
-@Table(name = "like_cases", schema = "test", catalog = "")
-@Proxy(lazy = false)
+@Table(name = "like_cases", schema = "course", catalog = "")
 public class LikeCasesEntity {
-    private Timestamp time;
-    private String username;
-    private int caseid;
-    private int liked;
-    private int likeid;
-
     @Basic
     @Column(name = "time")
+    private Timestamp time;
+    @Basic
+    @Column(name = "Username")
+    private String username;
+    @Basic
+    @Column(name = "caseid")
+    private String caseid;
+    @Basic
+    @Column(name = "liked")
+    private String liked;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "likeid")
+    private int likeid;
+
     public Timestamp getTime() {
         return time;
     }
@@ -26,8 +31,6 @@ public class LikeCasesEntity {
         this.time = time;
     }
 
-    @Basic
-    @Column(name = "Username")
     public String getUsername() {
         return username;
     }
@@ -36,28 +39,22 @@ public class LikeCasesEntity {
         this.username = username;
     }
 
-    @Basic
-    @Column(name = "caseid")
-    public int getCaseid() {
+    public String getCaseid() {
         return caseid;
     }
 
-    public void setCaseid(int caseid) {
+    public void setCaseid(String caseid) {
         this.caseid = caseid;
     }
 
-    @Basic
-    @Column(name = "liked")
-    public int getLiked() {
+    public String getLiked() {
         return liked;
     }
 
-    public void setLiked(int liked) {
+    public void setLiked(String liked) {
         this.liked = liked;
     }
 
-    @Id
-    @Column(name = "likeid")
     public int getLikeid() {
         return likeid;
     }
@@ -70,12 +67,25 @@ public class LikeCasesEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         LikeCasesEntity that = (LikeCasesEntity) o;
-        return caseid == that.caseid && liked == that.liked && likeid == that.likeid && Objects.equals(time, that.time) && Objects.equals(username, that.username);
+
+        if (likeid != that.likeid) return false;
+        if (time != null ? !time.equals(that.time) : that.time != null) return false;
+        if (username != null ? !username.equals(that.username) : that.username != null) return false;
+        if (caseid != null ? !caseid.equals(that.caseid) : that.caseid != null) return false;
+        if (liked != null ? !liked.equals(that.liked) : that.liked != null) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(time, username, caseid, liked, likeid);
+        int result = time != null ? time.hashCode() : 0;
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        result = 31 * result + (caseid != null ? caseid.hashCode() : 0);
+        result = 31 * result + (liked != null ? liked.hashCode() : 0);
+        result = 31 * result + likeid;
+        return result;
     }
 }
