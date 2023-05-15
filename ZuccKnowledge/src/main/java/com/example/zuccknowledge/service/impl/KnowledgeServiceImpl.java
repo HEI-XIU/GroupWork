@@ -8,6 +8,8 @@ import com.example.zuccknowledge.formbean.KRecordRankDto;
 import com.example.zuccknowledge.formbean.KnowledgeDto;
 import com.example.zuccknowledge.repository.*;
 import com.example.zuccknowledge.service.KnowledgeService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -26,7 +28,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     public static final String HOT_RANK = "hot_rank";
     public static final String RECORD_RANK = "k_record";
     @Autowired
-    KReadRecordRepository kReadRecordRepository;
+    private KReadRecordRepository kReadRecordRepository;
     @Autowired
     private KnowledgeRepository knowledgeRepository;
     @Autowired
@@ -183,6 +185,23 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         System.out.println("获取到的排行和分数列表:" + JSON.toJSONString(rangeWithScores));
 
         return rangeWithScores;
+    }
+
+    @Override
+    public void insert() {
+        List<String> records = redisTemplate.opsForList().range("k_record", 0, -1);
+
+        for (String record : records) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                KReadRecordEntity req = objectMapper.readValue(record, KReadRecordEntity.class);
+                kReadRecordRepository.save(req);
+
+                redisTemplate.opsForList().leftPop("k_record");
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void hotRankRedis() {

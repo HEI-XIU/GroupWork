@@ -62,4 +62,6 @@ public interface KnowledgeService {
      * @auther zzt
      */
     Collection<ZSetOperations.TypedTuple<String>> getTop20Knowledges();
+
+    void insert();
 }
