@@ -84,6 +84,16 @@ public interface LikeCasesService {
      */
     LikeCases getByLikedUserIdAndLikedPostId(String likedUserId, String likedPostId);
 
+    /**
+     * 根据id删除案例
+     *
+     * @param id
+     * @return
+     */
+    void deleteLikeCases(int id);
+
+    void save1LikeCases(LikeCases likeCases);
+
     void transLikedFromRedis();
     void transLikedCountFromRedis();
 }

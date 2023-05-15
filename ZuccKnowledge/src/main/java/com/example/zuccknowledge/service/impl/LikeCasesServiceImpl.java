@@ -86,6 +86,53 @@ public class LikeCasesServiceImpl implements LikeCasesService {
     }
 
     @Override
+    public void deleteLikeCases(int id) {
+        try {
+            likeCasesRepository.deleteById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EchoServiceException("删除失败");
+        }
+    }
+
+    @Override
+    public void save1LikeCases(LikeCases likeCases) {
+        try {
+            List<LikeCasesEntity> likeCasesEntities = likeCasesRepository.getByNameAndCase(likeCases.getUsername(), Integer.parseInt(likeCases.getCaseid()));
+            //该用户没有点赞记录
+            if (likeCasesEntities.size() == 0) {
+                System.out.println("ok insert");
+                LikeCasesEntity likeCasesEntity = new LikeCasesEntity();
+                BeanUtils.copyProperties(likeCases, likeCasesEntity);
+                likeCasesRepository.save(likeCasesEntity);
+            }else {
+                System.out.println("likeid:" + likeCases.getLikeid());
+                System.out.println(likeCasesEntities.get(0).getLikeid());
+                likeCases.setLikeid(likeCasesEntities.get(0).getLikeid());
+                List<LikeCasesEntity> likeCasesEntities1 = likeCasesRepository.judgelike(likeCases.getUsername(), Integer.parseInt(likeCases.getCaseid()));
+                //有记录但现在liked为0
+                if (likeCasesEntities1.size() == 0){
+                    likeCasesRepository.deleteById(likeCasesEntities.get(0).getLikeid());
+                    System.out.println("0 -> 1");
+                    LikeCasesEntity likeCasesEntity = new LikeCasesEntity();
+                    BeanUtils.copyProperties(likeCases, likeCasesEntity);
+                    likeCasesRepository.save(likeCasesEntity);
+                }else {
+                    likeCasesRepository.deleteById(likeCasesEntities.get(0).getLikeid());
+                    System.out.println("1 -> 0");
+                    likeCases.setLiked("0");
+                    LikeCasesEntity likeCasesEntity = new LikeCasesEntity();
+                    BeanUtils.copyProperties(likeCases, likeCasesEntity);
+                    likeCasesRepository.save(likeCasesEntity);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EchoServiceException("添加/修改失败");
+        }
+    }
+
+    @Override
     public void save(LikeCases likeCases) {
         try{
             LikeCasesEntity likeCasesEntity = new LikeCasesEntity();

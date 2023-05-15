@@ -51,6 +51,18 @@ public class LikeCasesController {
     /**
      * 根据User和caseId查找点赞记录
      *
+     * @param likeCases
+     * @return
+     */
+    @PostMapping("/savelikes")
+    public ResponseData save1LikeCases(@RequestBody LikeCases likeCases) {
+        likeCasesService.save1LikeCases(likeCases);
+        return new ResponseData(ResponseMsg.SUCCESS);
+    }
+
+    /**
+     * 根据User和caseId查找点赞记录
+     *
      * @param name
      * @param caseid
      * @return
