@@ -8,10 +8,14 @@ import com.example.zuccknowledge.repository.CasesRepository;
 import com.example.zuccknowledge.service.CasesService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -126,6 +130,8 @@ public class CasesServiceImpl implements CasesService {
     @Override
     public Collection<ZSetOperations.TypedTuple<String>> getTop20Cases() {
 //        redisTemplate.opsForValue();
+//        redisTemplate.setKeySerializer(new StringRedisSerializer());
+//        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         Set<String> range = redisTemplate.opsForZSet().reverseRange(SCORE_RANK, 0, 19);
         System.out.println("获取到的排行列表:" + JSON.toJSONString(range));
         Set<ZSetOperations.TypedTuple<String>> rangeWithScores = redisTemplate.opsForZSet().reverseRangeWithScores(SCORE_RANK, 0, 19);

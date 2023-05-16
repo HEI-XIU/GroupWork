@@ -7,14 +7,17 @@ import com.example.zuccknowledge.result.zk.ReturnCode;
 import com.example.zuccknowledge.result.zk.ReturnVO;
 import com.example.zuccknowledge.service.KnowledgeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 
-import static com.example.zuccknowledge.service.impl.CasesServiceImpl.SCORE_RANK;
+import static com.example.zuccknowledge.service.impl.KnowledgeServiceImpl.HOT_RANK;
 
 @RestController
 @RequestMapping("/api/knowledge/v1")
@@ -96,15 +99,15 @@ public class KnowledgeController {
 
     /**
      * 获取知识点点赞排名
-     * @auther zzt
      *
+     * @auther zzt
      */
     @GetMapping("/top20knowledges")
-    public ReturnVO getTop20Knowledges(){
+    public ReturnVO getTop20Knowledges() {
         Collection<ZSetOperations.TypedTuple<String>> tags;
         try {
-            tags=knowledgeService.getTop20Knowledges();
-        }  catch (Exception e) {
+            tags = knowledgeService.getTop20Knowledges();
+        } catch (Exception e) {
             e.printStackTrace();
             return new ReturnVO(ReturnCode.FAIL);
         }
@@ -116,8 +119,9 @@ public class KnowledgeController {
      */
     @Autowired
     private StringRedisTemplate redisTemplate;
+
     @PostMapping("/test")
     public void add() {
-        redisTemplate.opsForZSet().add(SCORE_RANK, "shaj四", 99);
+        redisTemplate.opsForZSet().add(HOT_RANK, "知识点1", 20);
     }
 }

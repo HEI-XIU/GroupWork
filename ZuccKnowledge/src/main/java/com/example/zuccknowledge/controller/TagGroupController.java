@@ -1,8 +1,9 @@
 package com.example.zuccknowledge.controller;
 
 
+import com.example.zuccknowledge.entity.TagGroupEntity;
 import com.example.zuccknowledge.entity.TgroupEntity;
-import com.example.zuccknowledge.formbean.TagGroupDto;
+import com.example.zuccknowledge.formbean.TagGroup;
 import com.example.zuccknowledge.repository.GroupRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class TagGroupController {
 
     //获取所有标签组
     @GetMapping("/all")
-    List<TagGroupDto> getAll() {
+    List<TagGroup> getAll() {
         return convert(tgRepository.findAll());
     }
     //根据id获取标签组
@@ -31,12 +32,12 @@ public class TagGroupController {
     }
     //根据标签组名模糊获取标签组
     @GetMapping("/byname/{nameLike}")
-    List<TagGroupDto> getByName(@PathVariable String nameLike){
+    List<TagGroup> getByName(@PathVariable String nameLike){
         return convert(tgRepository.getNameLike("%"+nameLike+"%"));
     }
     //新增和修改标签组
     @PostMapping("/save")
-    public int saveTagGroup(@RequestBody TagGroupDto tg){
+    public int saveTagGroup(@RequestBody TagGroup tg){
         TgroupEntity tgEntity = new TgroupEntity();
         BeanUtils.copyProperties(tg,tgEntity);
         tgRepository.save(tgEntity);
@@ -49,10 +50,10 @@ public class TagGroupController {
         return 1;
     }
 
-    private List<TagGroupDto> convert(List<TgroupEntity> entityList) {
-        List<TagGroupDto> TgList = new ArrayList<>();
+    private List<TagGroup> convert(List<TgroupEntity> entityList) {
+        List<TagGroup> TgList = new ArrayList<>();
         entityList.stream().forEach(item -> {
-            TagGroupDto tg = new TagGroupDto();
+            TagGroup tg = new TagGroup();
             BeanUtils.copyProperties(item, tg);
             TgList.add(tg);
         });
