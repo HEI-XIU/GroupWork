@@ -89,9 +89,9 @@ public class LikeCasesServiceImpl implements LikeCasesService {
     public void save(LikeCases likeCases) {
         try{
             LikeCasesEntity likeCasesEntity = new LikeCasesEntity();
-            System.out.println("saveLike"+likeCases);
+//            System.out.println("saveLike"+likeCases);
             BeanUtils.copyProperties(likeCases,likeCasesEntity);
-            System.out.println("savelikeCasesEntity"+likeCasesEntity);
+//            System.out.println("savelikeCasesEntity"+likeCasesEntity);
             likeCasesRepository.save(likeCasesEntity);
         }catch (Exception e){
             e.printStackTrace();
@@ -156,7 +156,7 @@ public class LikeCasesServiceImpl implements LikeCasesService {
         List<LikedCountDto> list = redisService.getLikedCountFromRedis();
 //        System.out.println("transLikedCountFromRedis+list"+list);
         for (LikedCountDto dto : list) {
-            System.out.println("dto"+dto);
+//            System.out.println("dto"+dto);
             int id = Integer.parseInt(dto.getMember());
             CasesEntity casesEntity = casesRepository.getByCasesId(id);
             CasesDto cases = new CasesDto();

@@ -64,7 +64,7 @@ public class RedisServiceImpl implements RedisService {
             Timestamp timestamp = new Timestamp(datetime);
 
             LikeCases likeCases = new LikeCases(likedCaseId, likeUsername, value,timestamp);
-            System.out.println("likeCases"+likeCases);
+//System.out.println("likeCases"+likeCases);
             list.add(likeCases);
 
             //存到 list 后从 Redis 中删除
