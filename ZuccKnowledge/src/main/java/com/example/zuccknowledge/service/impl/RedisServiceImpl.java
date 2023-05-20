@@ -42,7 +42,7 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void decrementLikedCount(String likedCaseId) {
 //        redisTemplate.opsForHash().increment(RedisKeyUtils.MAP_KEY_USER_LIKED_COUNT, likedCaseId, -1);
-        redisTemplate.opsForZSet().incrementScore(RedisKeyUtils.SCORE_RANK, likedCaseId, 1);
+        redisTemplate.opsForZSet().incrementScore(RedisKeyUtils.SCORE_RANK, likedCaseId, -1);
     }
 
     @Override
