@@ -51,6 +51,13 @@ public interface LikeCasesService {
      */
     void saveLikeCases(LikeCases likeCases);
 
+    /**
+     * 添加/修改案例-RabbitMQ
+     *
+     * @param likeCases
+     * @return
+     */
+    void saveLikecases(LikeCases likeCases);
 
     /**
      * 保存点赞记录
