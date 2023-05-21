@@ -5,6 +5,7 @@ import com.example.zuccknowledge.result.ResponseData;
 import com.example.zuccknowledge.result.ResponseMsg;
 import com.example.zuccknowledge.result.zk.ReturnCode;
 import com.example.zuccknowledge.result.zk.ReturnVO;
+import com.example.zuccknowledge.sender.CasesSender;
 import com.example.zuccknowledge.service.CasesService;
 import com.example.zuccknowledge.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class CasesController {
     private CasesService casesService;
     @Autowired
     private RedisService redisService;
+    @Autowired
+    private CasesSender casesSender;
 
 //    public CasesController(CasesService casesService) {
 //        this.casesService = casesService;
@@ -108,7 +111,14 @@ public class CasesController {
 //    }
     public ResponseData saveCases(@RequestBody CasesDto casesDto) {
         casesService.saveCases(casesDto);
+        simpleSend();
         return new ResponseData(ResponseMsg.SUCCESS);
+    }
+
+    @RequestMapping("/simple")
+    public String simpleSend(){
+        casesSender.sendMessage();
+        return "消息发送成功";
     }
 
     /**

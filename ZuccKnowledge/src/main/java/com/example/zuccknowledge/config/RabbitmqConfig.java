@@ -15,6 +15,11 @@ public class RabbitmqConfig {
         return new Queue("KRankQueue");
     }
 
+    @Bean
+    public Queue CasesHello(){
+        return new Queue("cases.hello");
+    }
+
     // 创建交换机
     @Bean
     public DirectExchange directExchange() {
