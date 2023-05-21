@@ -35,7 +35,17 @@ public class LikeCasesController {
         List<LikeCases> likeCases = likeCasesService.getAll();
         return new ResponseData(ResponseMsg.SUCCESS, likeCases);
     }
-
+    /**
+     * 添加/修改案例-RabbitMQ
+     *
+     * @param likeCases
+     * @return
+     */
+    @PostMapping("/like")
+    public ResponseData like(@RequestBody LikeCases likeCases) {
+        likeCasesService.saveLikecases(likeCases);
+        return new ResponseData(ResponseMsg.SUCCESS);
+    }
     /**
      * 添加/修改案例
      *
@@ -45,6 +55,18 @@ public class LikeCasesController {
     @PostMapping("/save")
     public ResponseData saveLikeCases(@RequestBody LikeCases likeCases) {
         likeCasesService.saveLikeCases(likeCases);
+        return new ResponseData(ResponseMsg.SUCCESS);
+    }
+
+    /**
+     * 根据User和caseId查找点赞记录
+     *
+     * @param likeCases
+     * @return
+     */
+    @PostMapping("/savelikes")
+    public ResponseData save1LikeCases(@RequestBody LikeCases likeCases) {
+        likeCasesService.save1LikeCases(likeCases);
         return new ResponseData(ResponseMsg.SUCCESS);
     }
 

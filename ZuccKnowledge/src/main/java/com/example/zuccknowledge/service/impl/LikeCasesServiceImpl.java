@@ -17,11 +17,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.Queue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import java.sql.Timestamp;
+import java.time.Instant;
 @Service
 public class LikeCasesServiceImpl implements LikeCasesService {
 
@@ -33,6 +39,25 @@ public class LikeCasesServiceImpl implements LikeCasesService {
     private CasesService casesService;
     @Autowired
     private CasesRepository casesRepository;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private MessageConverter messageConverter;
+    @Override
+    public void saveLikecases(LikeCases likeCases) {
+        MessageProperties messageProperties = new MessageProperties();
+        messageProperties.setContentType("application/json");
+        Message message = messageConverter.toMessage(likeCases, messageProperties);
+        LikeCasesEntity likeCasesentity = new LikeCasesEntity();
+        likeCasesentity.setUsername(likeCases.getUsername());
+        likeCasesentity.setCaseid(likeCases.getCaseid());
+        likeCasesentity.setTime(Timestamp.from(Instant.now()));
+        likeCasesentity.setLiked(likeCases.getLiked());
+
+        likeCasesRepository.save(likeCasesentity);
+
+        rabbitTemplate.convertAndSend("LikeQueue", message);
+    }
     /**
      * 获取所有点赞
      *
@@ -79,6 +104,53 @@ public class LikeCasesServiceImpl implements LikeCasesService {
             LikeCasesEntity likeCasesEntity = new LikeCasesEntity();
             BeanUtils.copyProperties(likeCases, likeCasesEntity);
             likeCasesRepository.save(likeCasesEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EchoServiceException("添加/修改失败");
+        }
+    }
+
+    @Override
+    public void deleteLikeCases(int id) {
+        try {
+            likeCasesRepository.deleteById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EchoServiceException("删除失败");
+        }
+    }
+
+    @Override
+    public void save1LikeCases(LikeCases likeCases) {
+        try {
+            List<LikeCasesEntity> likeCasesEntities = likeCasesRepository.getByNameAndCase(likeCases.getUsername(), Integer.parseInt(likeCases.getCaseid()));
+            //该用户没有点赞记录
+            if (likeCasesEntities.size() == 0) {
+                System.out.println("ok insert");
+                LikeCasesEntity likeCasesEntity = new LikeCasesEntity();
+                BeanUtils.copyProperties(likeCases, likeCasesEntity);
+                likeCasesRepository.save(likeCasesEntity);
+            }else {
+                System.out.println("likeid:" + likeCases.getLikeid());
+                System.out.println(likeCasesEntities.get(0).getLikeid());
+                likeCases.setLikeid(likeCasesEntities.get(0).getLikeid());
+                List<LikeCasesEntity> likeCasesEntities1 = likeCasesRepository.judgelike(likeCases.getUsername(), Integer.parseInt(likeCases.getCaseid()));
+                //有记录但现在liked为0
+                if (likeCasesEntities1.size() == 0){
+                    likeCasesRepository.deleteById(likeCasesEntities.get(0).getLikeid());
+                    System.out.println("0 -> 1");
+                    LikeCasesEntity likeCasesEntity = new LikeCasesEntity();
+                    BeanUtils.copyProperties(likeCases, likeCasesEntity);
+                    likeCasesRepository.save(likeCasesEntity);
+                }else {
+                    likeCasesRepository.deleteById(likeCasesEntities.get(0).getLikeid());
+                    System.out.println("1 -> 0");
+                    likeCases.setLiked("0");
+                    LikeCasesEntity likeCasesEntity = new LikeCasesEntity();
+                    BeanUtils.copyProperties(likeCases, likeCasesEntity);
+                    likeCasesRepository.save(likeCasesEntity);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new EchoServiceException("添加/修改失败");

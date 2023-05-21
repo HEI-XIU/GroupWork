@@ -51,6 +51,13 @@ public interface LikeCasesService {
      */
     void saveLikeCases(LikeCases likeCases);
 
+    /**
+     * 添加/修改案例-RabbitMQ
+     *
+     * @param likeCases
+     * @return
+     */
+    void saveLikecases(LikeCases likeCases);
 
     /**
      * 保存点赞记录
@@ -83,6 +90,16 @@ public interface LikeCasesService {
      * @return
      */
     LikeCases getByLikedUserIdAndLikedPostId(String likedUserId, String likedPostId);
+
+    /**
+     * 根据id删除案例
+     *
+     * @param id
+     * @return
+     */
+    void deleteLikeCases(int id);
+
+    void save1LikeCases(LikeCases likeCases);
 
     void transLikedFromRedis();
     void transLikedCountFromRedis();

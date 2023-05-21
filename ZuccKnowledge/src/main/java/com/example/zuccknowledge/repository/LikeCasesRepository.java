@@ -32,4 +32,8 @@ public interface LikeCasesRepository extends JpaRepository<LikeCasesEntity,Integ
     @Query(value = "SELECT * from like_cases\n" +
             "WHERE (caseid = ?1 AND username = ?2)", nativeQuery = true)
     LikeCasesEntity findByCaseidAndUsername(String caseid, String username);
+
+    @Query(value = "SELECT * from like_cases\n" +
+            "WHERE (Username LIKE ?1 AND caseId = ?2 AND liked = 1)", nativeQuery = true)
+    List<LikeCasesEntity> judgelike(String name, Integer caseid);
 }

@@ -1,4 +1,4 @@
-package com.example.zuccknowledge.utils;
+package com.example.zuccknowledge.config;
 
 import com.example.zuccknowledge.bean.HotTask;
 import org.quartz.*;
