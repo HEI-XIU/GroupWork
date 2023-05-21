@@ -17,11 +17,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.Queue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import java.sql.Timestamp;
+import java.time.Instant;
 @Service
 public class LikeCasesServiceImpl implements LikeCasesService {
 
@@ -33,6 +39,25 @@ public class LikeCasesServiceImpl implements LikeCasesService {
     private CasesService casesService;
     @Autowired
     private CasesRepository casesRepository;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private MessageConverter messageConverter;
+    @Override
+    public void saveLikecases(LikeCases likeCases) {
+        MessageProperties messageProperties = new MessageProperties();
+        messageProperties.setContentType("application/json");
+        Message message = messageConverter.toMessage(likeCases, messageProperties);
+        LikeCasesEntity likeCasesentity = new LikeCasesEntity();
+        likeCasesentity.setUsername(likeCases.getUsername());
+        likeCasesentity.setCaseid(likeCases.getCaseid());
+        likeCasesentity.setTime(Timestamp.from(Instant.now()));
+        likeCasesentity.setLiked(likeCases.getLiked());
+
+        likeCasesRepository.save(likeCasesentity);
+
+        rabbitTemplate.convertAndSend("LikeQueue", message);
+    }
     /**
      * 获取所有点赞
      *
