@@ -6,12 +6,14 @@ import com.example.zuccknowledge.service.RedisService;
 import com.example.zuccknowledge.utils.LikedStatusEnum;
 import com.example.zuccknowledge.utils.RedisKeyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -19,11 +21,12 @@ import java.util.Map;
 public class RedisServiceImpl implements RedisService {
     @Autowired
     StringRedisTemplate redisTemplate;
+
     @Override
     public void saveLikedRedis(String likeUsername, String likedCaseId) {
-        String key = RedisKeyUtils.getLikedKey(likeUsername,likedCaseId);
+        String key = RedisKeyUtils.getLikedKey(likeUsername, likedCaseId);
 
-        redisTemplate.opsForHash().put(RedisKeyUtils.MAP_KEY_USER_LIKED,key, LikedStatusEnum.LIKE.getCode());
+        redisTemplate.opsForHash().put(RedisKeyUtils.MAP_KEY_USER_LIKED, key, LikedStatusEnum.LIKE.getCode());
     }
 
     @Override
@@ -42,7 +45,7 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void decrementLikedCount(String likedCaseId) {
 //        redisTemplate.opsForHash().increment(RedisKeyUtils.MAP_KEY_USER_LIKED_COUNT, likedCaseId, -1);
-        redisTemplate.opsForZSet().incrementScore(RedisKeyUtils.SCORE_RANK, likedCaseId, 1);
+        redisTemplate.opsForZSet().incrementScore(RedisKeyUtils.SCORE_RANK, likedCaseId, -1);
     }
 
     @Override
@@ -63,8 +66,8 @@ public class RedisServiceImpl implements RedisService {
             long datetime = System.currentTimeMillis();
             Timestamp timestamp = new Timestamp(datetime);
 
-            LikeCases likeCases = new LikeCases(likedCaseId, likeUsername, value,timestamp);
-            System.out.println("likeCases"+likeCases);
+            LikeCases likeCases = new LikeCases(likedCaseId, likeUsername, value, timestamp);
+            System.out.println("likeCases" + likeCases);
             list.add(likeCases);
 
             //存到 list 后从 Redis 中删除
@@ -79,9 +82,9 @@ public class RedisServiceImpl implements RedisService {
         Cursor<ZSetOperations.TypedTuple<String>> cursor = redisTemplate.opsForZSet().scan(RedisKeyUtils.SCORE_RANK, ScanOptions.NONE);
         List<LikedCountDto> list = new ArrayList<>();
 
-        while (cursor.hasNext()){
+        while (cursor.hasNext()) {
 
-            ZSetOperations.TypedTuple<String> map =  cursor.next();
+            ZSetOperations.TypedTuple<String> map = cursor.next();
 
             //将点赞数量存储在 LikedCountDT
             String key = map.getValue();
@@ -93,5 +96,4 @@ public class RedisServiceImpl implements RedisService {
 //        System.out.println("getLikedCountFromRedis"+list);
         return list;
     }
-
 }
