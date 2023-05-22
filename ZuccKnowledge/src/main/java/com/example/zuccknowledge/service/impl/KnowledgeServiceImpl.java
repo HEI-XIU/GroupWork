@@ -9,14 +9,16 @@ import com.example.zuccknowledge.formbean.KRecordRankDto;
 import com.example.zuccknowledge.formbean.KnowledgeDto;
 import com.example.zuccknowledge.repository.*;
 import com.example.zuccknowledge.service.KnowledgeService;
+import com.example.zuccknowledge.utils.RabbitmqUtils;
+import com.example.zuccknowledge.utils.RedisUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -29,8 +31,15 @@ import java.util.Set;
 
 @Service
 public class KnowledgeServiceImpl implements KnowledgeService {
+    public static final String HOT_RANK = "hot_rank";
+    public static final String RECORD_RANK = "k_record";
+    @Resource
+    RedisUtils redisUtils;
+    @Resource
+    RabbitmqUtils rabbitmqUtils;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
-    KReadRecordRepository kReadRecordRepository;
+    private KReadRecordRepository kReadRecordRepository;
     @Autowired
     private KnowledgeRepository knowledgeRepository;
     @Autowired
@@ -39,10 +48,6 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     private CasesRepository casesRepository;
     @Autowired
     private TagAndKnowledgeRepository tagAndKnowledgeRepository;
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
-    public static final String HOT_RANK = "hot_rank";
 
     /**
      * 获取所有知识点
@@ -62,38 +67,24 @@ public class KnowledgeServiceImpl implements KnowledgeService {
      */
     @Override
     public KnowledgeDto getById(Integer id, Integer reader) {
-        Set<ZSetOperations.TypedTuple<String>> rangeWithScores = redisTemplate.opsForZSet().reverseRangeWithScores(HOT_RANK, 0, -1);
-        for (ZSetOperations.TypedTuple<String> rangeWithScore : rangeWithScores) {
-            System.out.println(rangeWithScore.getValue());
-            JSONObject value = JSONObject.parseObject(rangeWithScore.getValue());
-            System.out.println(value.getIntValue("kid") == id);
-            if (value.getIntValue("kid") == id) {
-                System.out.println(rangeWithScore.getScore());
-                redisTemplate.opsForZSet().incrementScore(HOT_RANK, rangeWithScore.getValue(), 1);
-                break;
-            }
-        }
-
         KnowledgeEntity knowledgeEntity = knowledgeRepository.getReferenceById(id);
-
         if (knowledgeEntity == null) {
             throw new EchoServiceException("没有找到id为 " + id + " 的知识点");
         }
 
-        try {
-            KReadRecordEntity kReadRecordEntity = new KReadRecordEntity();
-            kReadRecordEntity.setKid(id);
-            kReadRecordEntity.setReader(reader);
-            kReadRecordEntity.setOpentime(new Timestamp(System.currentTimeMillis()));
-            kReadRecordRepository.save(kReadRecordEntity);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new EchoServiceException("添加失败");
-        }
+        KReadRecordEntity kReadRecordEntity = new KReadRecordEntity();
+        kReadRecordEntity.setKid(id);
+        kReadRecordEntity.setReader(reader);
+        kReadRecordEntity.setOpentime(new Timestamp(System.currentTimeMillis()));
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", id);
+        jsonObject.put("key", HOT_RANK);
+        jsonObject.put("readRecord", JSON.toJSONString(kReadRecordEntity));
+        rabbitmqUtils.sendRoutingMessage("kRank", jsonObject);
 
         KnowledgeDto knowledgeDto = new KnowledgeDto();
         BeanUtils.copyProperties(knowledgeEntity, knowledgeDto);
-
         return knowledgeDto;
     }
 
@@ -136,6 +127,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
      * @return
      */
     @Override
+    @Transactional
     public void saveKnowledge(KnowledgeDto knowledgeDto) {
         try {
             KnowledgeEntity knowledgeEntity = new KnowledgeEntity();
@@ -144,6 +136,10 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         } catch (Exception e) {
             e.printStackTrace();
             throw new EchoServiceException("添加/修改失败");
+        }
+
+        if (knowledgeDto.getKid() == 0) {
+            redisUtils.add(HOT_RANK, String.valueOf(knowledgeRepository.getMaxKid()), 0);
         }
     }
 
@@ -165,6 +161,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
             throw new EchoServiceException("删除失败");
         }
         knowledgeRepository.deleteById(id);
+        redisUtils.remove(HOT_RANK, id + "");
     }
 
     /**
@@ -175,23 +172,35 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     @Override
     public Collection<ZSetOperations.TypedTuple<String>> getTop20Knowledges() {
         hotRankRedis();
-
-        Set<ZSetOperations.TypedTuple<String>> rangeWithScores = redisTemplate.opsForZSet().reverseRangeWithScores(HOT_RANK, 0, 19);
-        System.out.println("获取到的排行和分数列表:" + JSON.toJSONString(rangeWithScores));
-
+        Set<ZSetOperations.TypedTuple<String>> rangeWithScores = redisUtils.getOrderedData(HOT_RANK, 19);
         return rangeWithScores;
     }
 
-    private void hotRankRedis() {
-        Set<ZSetOperations.TypedTuple<String>> rangeWithScores = redisTemplate.opsForZSet().reverseRangeWithScores(HOT_RANK, 0, 19);
-        System.out.println("获取到的排行和分数列表:" + JSON.toJSONString(rangeWithScores));
-        System.out.println(rangeWithScores.size());
-        if (rangeWithScores.size() == 0) {
-            List<KRecordRankDto> knowledgeEntityList = knowledgeRepository.getKRecordRank();
-            for (KRecordRankDto kRecordRankDto : knowledgeEntityList) {
-                redisTemplate.opsForZSet().add(HOT_RANK, JSON.toJSONString(kRecordRankDto), kRecordRankDto.getRank());
+    @Override
+    public void insert() {
+        List<String> records = redisUtils.getList("k_record");
+
+        for (String record : records) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                KReadRecordEntity req = objectMapper.readValue(record, KReadRecordEntity.class);
+                kReadRecordRepository.save(req);
+
+                redisUtils.leftPop("k_record");
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
             }
-            System.out.println("当前使用mysql：获取所有知识点信息");
+        }
+    }
+
+    private void hotRankRedis() {
+        Set<ZSetOperations.TypedTuple<String>> rangeWithScores = redisUtils.getOrderedData(HOT_RANK, -1);
+        if (rangeWithScores.size() == 0) {
+            List<KRecordRankDto> kRecordRankDtoList = knowledgeRepository.getKRecordRank();
+            for (KRecordRankDto kRecordRankDto : kRecordRankDtoList) {
+                redisUtils.add(HOT_RANK, String.valueOf(kRecordRankDto.getKid()), kRecordRankDto.getRank());
+            }
+            logger.info("当前使用mysql：获取所有知识点信息");
         }
     }
 

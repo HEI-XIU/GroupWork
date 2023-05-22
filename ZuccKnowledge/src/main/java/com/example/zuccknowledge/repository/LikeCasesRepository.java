@@ -1,6 +1,9 @@
 package com.example.zuccknowledge.repository;
 
 import com.example.zuccknowledge.entity.LikeCasesEntity;
+import com.example.zuccknowledge.formbean.LikeCases;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -20,4 +23,17 @@ public interface LikeCasesRepository extends JpaRepository<LikeCasesEntity,Integ
             "WHERE caseId = ?", nativeQuery = true)
     List<LikeCasesEntity> getByCId(int caseid);
 
+    @Query(value = "SELECT * from like_cases\n" +
+            "WHERE (caseid = ?1 AND code = ?2)", nativeQuery = true)
+    Page<LikeCases> findByCaseidAndLiked(String caseid, Integer code, Pageable pageable);
+    @Query(value = "SELECT * from like_cases\n" +
+            "WHERE (username = ?1 AND code = ?2)", nativeQuery = true)
+    Page<LikeCases> findByUsernameAndLiked(String username, Integer code, Pageable pageable);
+    @Query(value = "SELECT * from like_cases\n" +
+            "WHERE (caseid = ?1 AND username = ?2)", nativeQuery = true)
+    LikeCasesEntity findByCaseidAndUsername(String caseid, String username);
+
+    @Query(value = "SELECT * from like_cases\n" +
+            "WHERE (Username LIKE ?1 AND caseId = ?2 AND liked = 1)", nativeQuery = true)
+    List<LikeCasesEntity> judgelike(String name, Integer caseid);
 }

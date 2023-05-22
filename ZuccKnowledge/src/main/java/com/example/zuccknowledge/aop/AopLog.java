@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component
 public class AopLog {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
     //线程局部的变量,解决多线程中相同变量的访问冲突问题。
     ThreadLocal<Long> startTime = new ThreadLocal<>();
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     //定义切点
     @Pointcut("execution( * com.example.zuccknowledge..*.*(..))")
@@ -41,14 +41,17 @@ public class AopLog {
         startTime.set(System.currentTimeMillis());
         // 接收到请求，记录请求内容
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
 
-        // 记录下请求内容
-        logger.info("URL : " + request.getRequestURL().toString());
-        logger.info("HTTP方法 : " + request.getMethod());
-        logger.info("IP地址 : " + request.getRemoteAddr());
-        logger.info("类的方法 : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
-        logger.info("参数 : " + request.getQueryString());
+        if (attributes != null) {
+            HttpServletRequest request = attributes.getRequest();
+
+            // 记录下请求内容
+            logger.info("URL : " + request.getRequestURL().toString());
+            logger.info("HTTP方法 : " + request.getMethod());
+            logger.info("IP地址 : " + request.getRemoteAddr());
+            logger.info("类的方法 : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+            logger.info("参数 : " + request.getQueryString());
+        }
     }
 
     @AfterReturning(pointcut = "aopWebLog()", returning = "retObject")

@@ -1,14 +1,14 @@
 package com.example.zuccknowledge.controller;
 
-import com.example.zuccknowledge.formbean.CasesDto;
-import com.example.zuccknowledge.formbean.LikeCases;
+import com.example.zuccknowledge.formbean.*;
 import com.example.zuccknowledge.entity.CasesEntity;
-import com.example.zuccknowledge.formbean.CoursesDto;
-import com.example.zuccknowledge.formbean.KnowledgeDto;
 import com.example.zuccknowledge.repository.CasesRepository;
 import com.example.zuccknowledge.result.ResponseData;
 import com.example.zuccknowledge.result.ResponseMsg;
+import com.example.zuccknowledge.result.zk.ReturnCode;
+import com.example.zuccknowledge.result.zk.ReturnVO;
 import com.example.zuccknowledge.service.LikeCasesService;
+import com.example.zuccknowledge.service.RedisService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +23,8 @@ import java.util.ArrayList;
 public class LikeCasesController {
     @Autowired
     private LikeCasesService likeCasesService;
-
+    @Autowired
+    private RedisService redisService;
     /**
      * 获取所有点赞
      *
@@ -34,7 +35,17 @@ public class LikeCasesController {
         List<LikeCases> likeCases = likeCasesService.getAll();
         return new ResponseData(ResponseMsg.SUCCESS, likeCases);
     }
-
+    /**
+     * 添加/修改案例-RabbitMQ
+     *
+     * @param likeCases
+     * @return
+     */
+    @PostMapping("/like")
+    public ResponseData like(@RequestBody LikeCases likeCases) {
+        likeCasesService.saveLikecases(likeCases);
+        return new ResponseData(ResponseMsg.SUCCESS);
+    }
     /**
      * 添加/修改案例
      *
@@ -44,6 +55,18 @@ public class LikeCasesController {
     @PostMapping("/save")
     public ResponseData saveLikeCases(@RequestBody LikeCases likeCases) {
         likeCasesService.saveLikeCases(likeCases);
+        return new ResponseData(ResponseMsg.SUCCESS);
+    }
+
+    /**
+     * 根据User和caseId查找点赞记录
+     *
+     * @param likeCases
+     * @return
+     */
+    @PostMapping("/savelikes")
+    public ResponseData save1LikeCases(@RequestBody LikeCases likeCases) {
+        likeCasesService.save1LikeCases(likeCases);
         return new ResponseData(ResponseMsg.SUCCESS);
     }
 
@@ -82,5 +105,29 @@ public class LikeCasesController {
     public ResponseData getByCId(@PathVariable int caseid) {
         List<LikeCases> likeCases = likeCasesService.getByCId(caseid);
         return new ResponseData(ResponseMsg.SUCCESS, likeCases);
+    }
+
+    @PostMapping("/likecases")
+
+    public ReturnVO LikeCases(@RequestBody LikeOrUnlikeBody likeOrUnlikeBody) {
+        try{
+        redisService.saveLikedRedis(likeOrUnlikeBody.getUername(),likeOrUnlikeBody.getCaseid());
+        redisService.incrementLikedCount(likeOrUnlikeBody.getCaseid());
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ReturnVO(ReturnCode.FAIL);
+        }
+            return new ReturnVO();
+        }
+    @PostMapping("/unlikecases")
+    public ReturnVO UnLikeCases(@RequestBody LikeOrUnlikeBody likeOrUnlikeBody) {
+        try{
+            redisService.unlikedFromRedis(likeOrUnlikeBody.getUername(),likeOrUnlikeBody.getCaseid());
+            redisService.decrementLikedCount(likeOrUnlikeBody.getCaseid());
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ReturnVO(ReturnCode.FAIL);
+        }
+        return new ReturnVO();
     }
 }

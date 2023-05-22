@@ -1,29 +1,21 @@
 package com.example.zuccknowledge.controller;
 
 import com.example.zuccknowledge.formbean.CasesDto;
-import com.example.zuccknowledge.entity.CasesEntity;
-import com.example.zuccknowledge.formbean.CoursesDto;
-import com.example.zuccknowledge.formbean.KnowledgeDto;
-import com.example.zuccknowledge.formbean.Tag;
-import com.example.zuccknowledge.repository.CasesRepository;
 import com.example.zuccknowledge.result.ResponseData;
 import com.example.zuccknowledge.result.ResponseMsg;
 import com.example.zuccknowledge.result.zk.ReturnCode;
 import com.example.zuccknowledge.result.zk.ReturnVO;
+import com.example.zuccknowledge.sender.CasesSender;
 import com.example.zuccknowledge.service.CasesService;
-import org.springframework.beans.BeanUtils;
+import com.example.zuccknowledge.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
-
-import java.util.ArrayList;
 
 import static com.example.zuccknowledge.service.impl.CasesServiceImpl.SCORE_RANK;
 
@@ -32,10 +24,19 @@ import static com.example.zuccknowledge.service.impl.CasesServiceImpl.SCORE_RANK
 public class CasesController {
     @Autowired
     private CasesService casesService;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private CasesSender casesSender;
 
 //    public CasesController(CasesService casesService) {
 //        this.casesService = casesService;
 //    }
+    /**
+     * 单个新增
+     */
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     /**
      * 获取所有案例
@@ -79,7 +80,6 @@ public class CasesController {
         return new ResponseData(ResponseMsg.SUCCESS, casesDtos);
     }
 
-
     /**
      * 根据KnowledgeID模糊查询案例
      *
@@ -111,7 +111,14 @@ public class CasesController {
 //    }
     public ResponseData saveCases(@RequestBody CasesDto casesDto) {
         casesService.saveCases(casesDto);
+        simpleSend();
         return new ResponseData(ResponseMsg.SUCCESS);
+    }
+
+    @RequestMapping("/simple")
+    public String simpleSend(){
+        casesSender.sendMessage();
+        return "消息发送成功";
     }
 
     /**
@@ -132,16 +139,14 @@ public class CasesController {
     }
 
     /**
-     *
      * @auther HEI-XIU
-     *
      */
     @GetMapping("/top20cases")
-    public ReturnVO getTop20Cases(){
+    public ReturnVO getTop20Cases() {
         Collection<ZSetOperations.TypedTuple<String>> tags;
         try {
-            tags=casesService.getTop20Cases();
-        }  catch (Exception e) {
+            tags = casesService.getTop20Cases();
+        } catch (Exception e) {
             e.printStackTrace();
             return new ReturnVO(ReturnCode.FAIL);
         }
@@ -152,29 +157,18 @@ public class CasesController {
 //        return new ReturnVO(ResponseMsg.SUCCESS);
     }
 
-    /**
-     * 单个新增
-     */
-    @Autowired
-    private StringRedisTemplate redisTemplate;
     @PostMapping("/test")
     public void add() {
         redisTemplate.opsForZSet().add(SCORE_RANK, "jsajdhl", 99);
     }
 
-
-
-
-
-    private List<CasesDto> convert(List<CasesEntity> entityList) {
-        List<CasesDto> casesList = new ArrayList<>();
-        entityList.stream().forEach(item -> {
-            CasesDto cases = new CasesDto();
-            BeanUtils.copyProperties(item, cases);
-            casesList.add(cases);
-        });
-
-        return casesList;
+    @PostMapping("/test1")
+    public void test() {
+        redisService.saveLikedRedis("zk", "11");
     }
 
+    @PostMapping("/test2")
+    public void test2() {
+        redisService.incrementLikedCount("1");
+    }
 }

@@ -54,12 +54,13 @@ public class CasesServiceImpl implements CasesService {
      */
     @Override
     public CasesDto getById(Integer id) {
-        CasesEntity casesEntity = casesRepository.getReferenceById(id);
+        CasesEntity casesEntity = casesRepository.getById(id);
         if (casesEntity == null) {
             throw new EchoServiceException("没有找到id为 " + id + " 的案例");
         }
 
         CasesDto casesDto = new CasesDto();
+//        System.out.println("casesEntity"+casesRepository.getById(id));
         BeanUtils.copyProperties(casesEntity, casesDto);
 
         return casesDto;
