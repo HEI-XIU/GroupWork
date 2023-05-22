@@ -1,20 +1,20 @@
 package com.example.zuccknowledge.controller;
 
-import com.example.zuccknowledge.entity.PrerelationEntity;
-import com.example.zuccknowledge.formbean.Prerelation;
+import com.example.zuccknowledge.formbean.PrerelationDto;
 import com.example.zuccknowledge.formbean.PrerelationView;
-import com.example.zuccknowledge.repository.PreRelationRepository;
-import org.springframework.beans.BeanUtils;
+import com.example.zuccknowledge.result.ResponseData;
+import com.example.zuccknowledge.result.ResponseMsg;
+import com.example.zuccknowledge.service.PreRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/prerelation")
+@RequestMapping("/api/prerelation/v1")
 public class PreRelationController {
     @Autowired
-    private PreRelationRepository preRelationRepository;
+    private PreRelationService preRelationService;
 
     /**
      * 查询所有知识点与知识点关系
@@ -22,38 +22,45 @@ public class PreRelationController {
      * @return
      */
     @GetMapping("/all")
-    List<PrerelationView> getAll() {
-        return preRelationRepository.getAll();
+    public ResponseData getAll() {
+        List<PrerelationView> prerelationViews = preRelationService.getAll();
+        return new ResponseData(ResponseMsg.SUCCESS, prerelationViews);
     }
 
     /**
-     * 根据id查询其所有前置知识点
+     * 根据id查询其所有前置知识点,即查询给定知识点的“依赖”的知识点
      *
      * @param id
      * @return
      */
-    @GetMapping("/byid/{id}")
-    List<PrerelationView> getById(@PathVariable Integer id) {
-        return preRelationRepository.getByKId(id);
+    @GetMapping("/kid/{id}")
+    public ResponseData getById(@PathVariable Integer id) {
+        List<PrerelationView> prerelationViews = preRelationService.getPre(id);
+        return new ResponseData(ResponseMsg.SUCCESS, prerelationViews);
+    }
+
+    /**
+     * 根据id查询其所有后置知识点,即查询给定知识点的“被依赖”的知识点
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/prekid/{id}")
+    public ResponseData getPostposition(@PathVariable Integer id) {
+        List<PrerelationView> prerelationViews = preRelationService.getPostposition(id);
+        return new ResponseData(ResponseMsg.SUCCESS, prerelationViews);
     }
 
     /**
      * 添加/修改知识点间关系
      *
-     * @param prerelation
+     * @param prerelationDto
      * @return
      */
     @PostMapping("/save")
-    public int savePreRelation(@RequestBody Prerelation prerelation) {
-        try {
-            PrerelationEntity prerelationEntity = new PrerelationEntity();
-            BeanUtils.copyProperties(prerelation, prerelationEntity);
-            preRelationRepository.save(prerelationEntity);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-        return 1;
+    public ResponseData savePreRelation(@RequestBody PrerelationDto prerelationDto) {
+        preRelationService.savePreRelation(prerelationDto);
+        return new ResponseData(ResponseMsg.SUCCESS);
     }
 
     /**
@@ -63,13 +70,20 @@ public class PreRelationController {
      * @return
      */
     @DeleteMapping("/delete/{id}")
-    public int deletePreRelation(@PathVariable("id") int id) {
-        try {
-            preRelationRepository.deleteById(id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-        return 1;
+    public ResponseData deletePreRelation(@PathVariable("id") int id) {
+        preRelationService.deletePreRelation(id);
+        return new ResponseData(ResponseMsg.SUCCESS);
+    }
+
+    /**
+     * 根据课程把知识点关联在一起
+     *
+     * @param kname
+     * @return
+     */
+    @GetMapping("/contact/{kname}")
+    public ResponseData getContactThroughKname(@PathVariable String kname) {
+        List<PrerelationView> prerelationViews = preRelationService.getContactThroughKname(kname);
+        return new ResponseData(ResponseMsg.SUCCESS, prerelationViews);
     }
 }

@@ -3,12 +3,14 @@ package com.example.zuccknowledge.controller;
 import com.example.zuccknowledge.entity.TagCourseEntity;
 import com.example.zuccknowledge.formbean.TagAndCourses;
 import com.example.zuccknowledge.repository.TagAndCoursesRepository;
+import com.example.zuccknowledge.result.zk.ReturnCode;
+import com.example.zuccknowledge.result.zk.ReturnVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/tacc")
+@RequestMapping("api/tag_courses/v1/")
 public class TagAndCoursesController {
     @Autowired
     private TagAndCoursesRepository tagAndCoursesRepository;
@@ -19,7 +21,7 @@ public class TagAndCoursesController {
      * @param tagAndCourses
      * @return
      */
-    @PostMapping("/save")
+    @PostMapping("save")
     public int saveKnowledge(@RequestBody TagAndCourses tagAndCourses) {
         TagCourseEntity tagCourseEntity = new TagCourseEntity();
         BeanUtils.copyProperties(tagAndCourses, tagCourseEntity);
@@ -34,9 +36,14 @@ public class TagAndCoursesController {
      * @param id
      * @return
      */
-    @DeleteMapping("/delete/{id}")
-    public int deleteCourses(@PathVariable("id") int id) {
-        tagAndCoursesRepository.deleteById(id);
-        return 1;
+    @DeleteMapping("courses/{id}")
+    public ReturnVO deleteCourses(@PathVariable("id") int id) {
+        try {
+            tagAndCoursesRepository.deleteById(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ReturnVO(ReturnCode.FAIL);
+        }
+        return new ReturnVO();
     }
 }
